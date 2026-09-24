@@ -39,3 +39,22 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ============================================
+# ≈÷«›«  ·„‘—Ê⁄ Code Tech
+# ============================================
+
+# ? «” À‰«¡ «·„·›«  «·Õ”«”…
+.env
+.env.local
+.env*.local
+
+# ? „Ã·œ «·—›⁄ (”‰” Œœ„ Cloudinary ·«Õﬁ«)
+/public/uploads
+
+# ? „·›«  «·‰Ÿ«„
+Thumbs.db
+Desktop.ini
+
+# ? VS Code («Œ Ì«—Ì)
+# .vscode/settings.json

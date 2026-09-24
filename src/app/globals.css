@@ -1,26 +1,198 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ==========================================
+   Code Tech - الألوان الرسمية من الشعار
+   ========================================== */
+
+@theme {
+  /* الأزرق الأساسي من الشعار */
+  --color-brand-50:  #EBF1FF;
+  --color-brand-100: #D6E3FF;
+  --color-brand-200: #A8C1FF;
+  --color-brand-300: #7A9EFF;
+  --color-brand-400: #4C7BFF;
+  --color-brand-500: #0B3DA8;  /* اللون الأساسي من الشعار */
+  --color-brand-600: #082B78;  /* الأزرق الداكن */
+  --color-brand-700: #061F58;
+  --color-brand-800: #041538;
+  --color-brand-900: #020A1C;
+
+  /* الأحمر من شعار Code Tech */
+  --color-accent-500: #E31E24;
+  --color-accent-600: #C1151B;
+  --color-accent-700: #9C1015;
+
+  /* الألوان المحايدة */
+  --color-dark:   #0A0A0A;
+  --color-light:  #F8FAFC;
+  --color-gray:   #6C757D;
+
+  /* الخطوط */
+  --font-sans:  'Cairo', 'Tajawal', system-ui, sans-serif;
+  --font-mono:  'JetBrains Mono', monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ==========================================
+   الإعدادات العامة
+   ========================================== */
+
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-light);
+  color: var(--color-dark);
+  font-family: var(--font-sans);
+  direction: rtl;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================
+   أنيميشن عائم للشعار
+   ========================================== */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-20px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ==========================================
+   Scrollbar مخصص
+   ========================================== */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F1F1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-500);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-600);
+}
+
+
+
+/* ==========================================
+   الوضع الليلي - شامل
+   ========================================== */
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+
+/* الخلفيات */
+html.dark .bg-white {
+  background-color: #1e293b !important;
+}
+
+html.dark .bg-slate-50 {
+  background-color: #1e293b !important;
+}
+
+html.dark .bg-slate-100 {
+  background-color: #334155 !important;
+}
+
+html.dark .bg-gray-50 {
+  background-color: #1e293b !important;
+}
+
+html.dark .bg-gray-100 {
+  background-color: #334155 !important;
+}
+
+/* النصوص */
+html.dark .text-slate-900 {
+  color: #f1f5f9 !important;
+}
+
+html.dark .text-slate-800 {
+  color: #e2e8f0 !important;
+}
+
+html.dark .text-slate-700 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+html.dark .text-slate-500 {
+  color: #64748b !important;
+}
+
+html.dark .text-gray-900 {
+  color: #f1f5f9 !important;
+}
+
+/* الحدود */
+html.dark .border-slate-100 {
+  border-color: #334155 !important;
+}
+
+html.dark .border-slate-200 {
+  border-color: #334155 !important;
+}
+
+html.dark .border-gray-100 {
+  border-color: #334155 !important;
+}
+
+html.dark .border-gray-200 {
+  border-color: #334155 !important;
+}
+
+html.dark .divide-slate-100 > * + * {
+  border-color: #334155 !important;
+}
+
+/* الحقول */
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* الجداول */
+html.dark thead {
+  background-color: #0f172a !important;
+}
+
+html.dark tbody tr:hover {
+  background-color: #334155 !important;
+}
+
+/* الانتقال السلس */
+html,
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
