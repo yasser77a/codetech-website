@@ -1,19 +1,21 @@
 import LoginForm from "@/components/auth/LoginForm";
-import { DEFAULT_ADMIN_PASSWORD } from "@/lib/users";
 
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4 relative overflow-hidden" dir="rtl">
       
-      {/* خلفية */}
+      {/* خلفية شبكية */}
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute inset-0"
-             style={{
-               backgroundImage: `linear-gradient(rgba(59,130,246,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.1) 1px, transparent 1px)`,
-               backgroundSize: '60px 60px',
-             }}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `linear-gradient(rgba(59,130,246,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.1) 1px, transparent 1px)`,
+            backgroundSize: "60px 60px",
+          }}
         />
       </div>
+
+      {/* دوائر ضوئية */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-[120px]" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-[120px]" />
 
@@ -34,26 +36,23 @@ export default function LoginPage() {
             <p className="text-blue-200 text-sm">لوحة التحكم الإدارية</p>
           </div>
 
-          <LoginForm defaultPassword={DEFAULT_ADMIN_PASSWORD} />
+          {/* نموذج تسجيل الدخول */}
+          <LoginForm />
 
           {/* رابط العودة */}
           <div className="mt-6 pt-6 border-t border-white/10 text-center">
-            <a href="/" className="text-blue-300 hover:text-white text-sm transition">
+            <a
+              href="/"
+              className="text-blue-300 hover:text-white text-sm transition"
+            >
               ← العودة إلى الموقع الرئيسي
             </a>
           </div>
         </div>
 
-        {/* معلومات الحساب */}
-        <div className="mt-6 bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-4 text-center">
-          <div className="text-blue-200 text-xs mb-2">🔑 بيانات الدخول الافتراضية</div>
-          <div className="text-white text-sm font-mono" dir="ltr">
-            <div>Username: <span className="text-yellow-400">yasser alashram</span></div>
-            <div>Password: <span className="text-yellow-400">{DEFAULT_ADMIN_PASSWORD}</span></div>
-          </div>
-          <div className="text-blue-300 text-xs mt-2">
-            ⚠️ غيّر كلمة المرور بعد أول تسجيل دخول
-          </div>
+        {/* حقوق النشر */}
+        <div className="mt-6 text-center text-blue-300/60 text-xs">
+          © 2026 Code Tech - جميع الحقوق محفوظة
         </div>
       </div>
     </div>

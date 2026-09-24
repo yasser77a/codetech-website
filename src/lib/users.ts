@@ -43,5 +43,3 @@ export function updatePassword(userId: string, newPassword: string): boolean {
   user.password = bcrypt.hashSync(newPassword, 10);
   return true;
 }
-
-export const DEFAULT_ADMIN_PASSWORD = DEFAULT_PASSWORD;

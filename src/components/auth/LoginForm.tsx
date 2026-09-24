@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Lock, User, Eye, EyeOff, Loader2, LogIn } from "lucide-react";
 
-export default function LoginForm({ defaultPassword }: { defaultPassword?: string }) {
+export default function LoginForm() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -41,11 +41,6 @@ export default function LoginForm({ defaultPassword }: { defaultPassword?: strin
     }
   };
 
-  const fillDefault = () => {
-    setUsername("yasser alashram");
-    setPassword(defaultPassword || "CodeTech@2026");
-  };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       
@@ -60,9 +55,10 @@ export default function LoginForm({ defaultPassword }: { defaultPassword?: strin
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="yasser alashram"
+            placeholder="أدخل اسم المستخدم"
             className="w-full bg-white/5 border border-white/10 rounded-xl pr-11 pl-4 py-3 text-white placeholder-blue-300/50 focus:outline-none focus:border-blue-500 focus:bg-white/10 transition"
             required
+            autoComplete="username"
             dir="ltr"
           />
         </div>
@@ -82,19 +78,25 @@ export default function LoginForm({ defaultPassword }: { defaultPassword?: strin
             placeholder="••••••••"
             className="w-full bg-white/5 border border-white/10 rounded-xl pr-11 pl-11 py-3 text-white placeholder-blue-300/50 focus:outline-none focus:border-blue-500 focus:bg-white/10 transition"
             required
+            autoComplete="current-password"
             dir="ltr"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-300 hover:text-white transition"
+            aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
           >
-            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            {showPassword ? (
+              <EyeOff className="w-5 h-5" />
+            ) : (
+              <Eye className="w-5 h-5" />
+            )}
           </button>
         </div>
       </div>
 
-      {/* الخطأ */}
+      {/* رسالة الخطأ */}
       {error && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -105,7 +107,7 @@ export default function LoginForm({ defaultPassword }: { defaultPassword?: strin
         </motion.div>
       )}
 
-      {/* الأزرار */}
+      {/* زر تسجيل الدخول */}
       <button
         type="submit"
         disabled={loading}
@@ -122,15 +124,6 @@ export default function LoginForm({ defaultPassword }: { defaultPassword?: strin
             <span>تسجيل الدخول</span>
           </>
         )}
-      </button>
-
-      {/* زر التعبئة السريعة */}
-      <button
-        type="button"
-        onClick={fillDefault}
-        className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-blue-200 py-2.5 rounded-xl text-sm transition"
-      >
-        🚀 تعبئة بيانات الدخول الافتراضية
       </button>
     </form>
   );
