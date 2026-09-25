@@ -1,8 +1,18 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, MessageCircle, Sparkles, Star, TrendingUp, CreditCard, Zap } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ArrowLeft,
+  MessageCircle,
+  Sparkles,
+  Star,
+  TrendingUp,
+  CreditCard,
+  Zap,
+} from "lucide-react";
 import Services from "@/components/home/Services";
 import WhyUs from "@/components/home/WhyUs";
 import ServicesShowcase from "@/components/home/ServicesShowcase";
@@ -10,19 +20,95 @@ import PortfolioTabs from "@/components/home/PortfolioTabs";
 import Reviews from "@/components/home/Reviews";
 import CTA from "@/components/home/CTA";
 
+// ==========================================
+// 🖼️ شرائح الـ Hero (الشعار + 7 صور)
+// ==========================================
+const heroSlides = [
+  {
+    type: "logo",
+    src: "/logo.png",
+    alt: "Code Tech Logo",
+    label: "Code Tech",
+    bgGlow: "rgba(59, 130, 246, 0.5)",
+  },
+  {
+    type: "image",
+    src: "/images/hero/web-main.jpg",
+    alt: "Web Development",
+    label: "تطوير المواقع",
+    bgGlow: "rgba(59, 130, 246, 0.5)",
+  },
+  {
+    type: "image",
+    src: "/images/hero/mobile-main.jpg",
+    alt: "Mobile Apps",
+    label: "تطبيقات الجوال",
+    bgGlow: "rgba(16, 185, 129, 0.5)",
+  },
+  {
+    type: "image",
+    src: "/images/hero/system-main.jpg",
+    alt: "Software Systems",
+    label: "الأنظمة البرمجية",
+    bgGlow: "rgba(139, 92, 246, 0.5)",
+  },
+  {
+    type: "image",
+    src: "/images/hero/security-main.jpg",
+    alt: "Security Systems",
+    label: "أنظمة الحماية",
+    bgGlow: "rgba(239, 68, 68, 0.5)",
+  },
+  {
+    type: "image",
+    src: "/images/hero/graphics-main.jpg",
+    alt: "Graphic Design",
+    label: "تصاميم جرافيكس",
+    bgGlow: "rgba(249, 115, 22, 0.5)",
+  },
+  {
+    type: "image",
+    src: "/images/hero/graduation-main.jpg",
+    alt: "Graduation Projects",
+    label: "مشاريع التخرج",
+    bgGlow: "rgba(20, 184, 166, 0.5)",
+  },
+  {
+    type: "image",
+    src: "/images/hero/downloads-main.jpg",
+    alt: "Downloads Library",
+    label: "مكتبة التحميلات",
+    bgGlow: "rgba(6, 182, 212, 0.5)",
+  },
+];
+
 export default function HomePage() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // ✅ التبديل التلقائي كل 3 ثواني
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const activeSlide = heroSlides[currentSlide];
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       {/* ==================== HERO ==================== */}
       <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-brand-900 to-slate-900 text-white overflow-hidden flex items-center">
-        
+
         {/* شبكة متحركة */}
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0" 
-               style={{
-                 backgroundImage: `linear-gradient(rgba(59,130,246,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.1) 1px, transparent 1px)`,
-                 backgroundSize: '60px 60px',
-               }} 
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `linear-gradient(rgba(59,130,246,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.1) 1px, transparent 1px)`,
+              backgroundSize: "60px 60px",
+            }}
           />
         </div>
 
@@ -33,7 +119,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-24 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             
-            {/* النص */}
+            {/* ==================== النص ==================== */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -48,7 +134,9 @@ export default function HomePage() {
                 className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-lg border border-blue-400/30 px-5 py-2.5 rounded-full"
               >
                 <Sparkles className="w-4 h-4 text-yellow-400" />
-                <span className="text-sm font-semibold">شركة برمجية رائدة في اليمن</span>
+                <span className="text-sm font-semibold">
+                  شركة برمجية رائدة في اليمن
+                </span>
               </motion.div>
 
               {/* العنوان */}
@@ -89,7 +177,10 @@ export default function HomePage() {
                   { icon: Star, label: "موثوق" },
                   { icon: CreditCard, label: "تقسيط" },
                 ].map((item, i) => (
-                  <div key={i} className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-3 flex items-center gap-2">
+                  <div
+                    key={i}
+                    className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-3 flex items-center gap-2"
+                  >
                     <item.icon className="w-5 h-5 text-blue-400" />
                     <span className="text-sm font-semibold">{item.label}</span>
                   </div>
@@ -145,12 +236,12 @@ export default function HomePage() {
               </motion.div>
             </motion.div>
 
-            {/* الشعار */}
+            {/* ==================== الصور المتحركة ==================== */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="relative flex justify-center"
+              className="relative flex justify-center items-center"
             >
               {/* حلقات مضيئة */}
               <div className="absolute inset-0 flex items-center justify-center">
@@ -165,19 +256,76 @@ export default function HomePage() {
                   className="absolute w-[400px] h-[400px] border border-purple-500/20 rounded-full"
                 />
               </div>
-              
-              <motion.img
-                animate={{ y: [0, -20, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                src="/logo.png"
-                alt="Code Tech"
-                className="relative w-full max-w-lg drop-shadow-[0_0_80px_rgba(59,130,246,0.5)]"
+
+              {/* هالة متوهجة (تتغير مع الشريحة) */}
+              <motion.div
+                key={`glow-${currentSlide}`}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 0.7, scale: 1 }}
+                transition={{ duration: 1 }}
+                className="absolute w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none"
+                style={{
+                  background: `radial-gradient(circle, ${activeSlide.bgGlow} 0%, transparent 70%)`,
+                }}
               />
+
+              {/* الصور (Slideshow) */}
+              <div className="relative w-full max-w-lg aspect-square">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentSlide}
+                    initial={{ opacity: 0, scale: 0.85, rotateY: -15 }}
+                    animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                    exit={{ opacity: 0, scale: 0.85, rotateY: 15 }}
+                    transition={{ duration: 0.7, ease: "easeInOut" }}
+                    className="absolute inset-0 flex items-center justify-center"
+                  >
+                    <Image
+                      src={activeSlide.src}
+                      alt={activeSlide.alt}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      priority={currentSlide === 0}
+                      className={`object-contain drop-shadow-[0_0_80px_rgba(59,130,246,0.5)] ${
+                        activeSlide.type === "logo" ? "animate-float" : ""
+                      }`}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* اسم الشريحة */}
+                <motion.div
+                  key={`label-${currentSlide}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur border border-white/10 rounded-full px-4 py-1.5"
+                >
+                  <span className="text-xs font-semibold text-white">
+                    {activeSlide.label}
+                  </span>
+                </motion.div>
+              </div>
+
+              {/* نقاط التنقل */}
+              <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                {heroSlides.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentSlide(i)}
+                    className={`h-2 rounded-full transition-all ${
+                      i === currentSlide
+                        ? "w-8 bg-blue-400"
+                        : "w-2 bg-white/30 hover:bg-white/50"
+                    }`}
+                    aria-label={`الشريحة ${i + 1}`}
+                  />
+                ))}
+              </div>
             </motion.div>
           </div>
         </div>
 
-        {/* Scroll indicator */}
+        {/* مؤشر التمرير للأسفل */}
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
@@ -189,6 +337,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
+      {/* ==================== بقية الأقسام ==================== */}
       <Services />
       <WhyUs />
       <ServicesShowcase />
