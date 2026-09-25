@@ -196,3 +196,58 @@ html,
 body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+
+/* ==========================================
+   الوضع الليلي - الموقع العام
+   ========================================== */
+
+/* الخلفيات */
+html.dark .bg-white {
+  background-color: #0f172a !important;
+}
+
+html.dark .bg-gray-50 {
+  background-color: #020617 !important;
+}
+
+html.dark .bg-slate-50 {
+  background-color: #0f172a !important;
+}
+
+/* النصوص */
+html.dark .text-gray-900 {
+  color: #f1f5f9 !important;
+}
+
+html.dark .text-gray-700 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .text-slate-900 {
+  color: #f1f5f9 !important;
+}
+
+html.dark .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+/* الحدود */
+html.dark .border-gray-200 {
+  border-color: #1e293b !important;
+}
+
+html.dark .border-gray-100 {
+  border-color: #1e293b !important;
+}
+
+html.dark .border-slate-100 {
+  border-color: #1e293b !important;
+}
+
+/* Shadow */
+html.dark .shadow-sm,
+html.dark .shadow-lg,
+html.dark .shadow-xl {
+  --tw-shadow-color: rgba(0, 0, 0, 0.5);
+}

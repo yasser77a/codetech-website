@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,6 +58,7 @@ export default function Navbar() {
 
         {/* زر CTA */}
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <a
             href="https://wa.me/967775566442"
             target="_blank"
