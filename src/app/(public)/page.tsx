@@ -33,49 +33,49 @@ const heroSlides = [
   },
   {
     type: "image",
-    src: "/images/hero/web-main.jpg",
+    src: "/images/hero/web-main.png",
     alt: "Web Development",
     label: "تطوير المواقع",
     bgGlow: "rgba(59, 130, 246, 0.5)",
   },
   {
     type: "image",
-    src: "/images/hero/mobile-main.jpg",
+    src: "/images/hero/mobile-main.png",
     alt: "Mobile Apps",
     label: "تطبيقات الجوال",
     bgGlow: "rgba(16, 185, 129, 0.5)",
   },
   {
     type: "image",
-    src: "/images/hero/system-main.jpg",
+    src: "/images/hero/system-main.png",
     alt: "Software Systems",
     label: "الأنظمة البرمجية",
     bgGlow: "rgba(139, 92, 246, 0.5)",
   },
   {
     type: "image",
-    src: "/images/hero/security-main.jpg",
+    src: "/images/hero/security-main.png",
     alt: "Security Systems",
     label: "أنظمة الحماية",
     bgGlow: "rgba(239, 68, 68, 0.5)",
   },
   {
     type: "image",
-    src: "/images/hero/graphics-main.jpg",
+    src: "/images/hero/graphics-main.png",
     alt: "Graphic Design",
     label: "تصاميم جرافيكس",
     bgGlow: "rgba(249, 115, 22, 0.5)",
   },
   {
     type: "image",
-    src: "/images/hero/graduation-main.jpg",
+    src: "/images/hero/graduation-main.png",
     alt: "Graduation Projects",
     label: "مشاريع التخرج",
     bgGlow: "rgba(20, 184, 166, 0.5)",
   },
   {
     type: "image",
-    src: "/images/hero/downloads-main.jpg",
+    src: "/images/hero/downloads-main.png",
     alt: "Downloads Library",
     label: "مكتبة التحميلات",
     bgGlow: "rgba(6, 182, 212, 0.5)",
@@ -289,6 +289,10 @@ export default function HomePage() {
                       className={`object-contain drop-shadow-[0_0_80px_rgba(59,130,246,0.5)] ${
                         activeSlide.type === "logo" ? "animate-float" : ""
                       }`}
+                      style={{
+                        mixBlendMode: activeSlide.type === "logo" ? "normal" : "screen",
+                        filter: activeSlide.type === "logo" ? "none" : "brightness(1.1) contrast(1.1)",
+                      }}
                     />
                   </motion.div>
                 </AnimatePresence>
