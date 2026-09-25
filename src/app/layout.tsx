@@ -16,49 +16,48 @@ const tajawal = Tajawal({
   display: "swap",
 });
 
-// ًںŒگ ط¹ظ†ظˆط§ظ† ط§ظ„ظ…ظˆظ‚ط¹ (ط؛ظٹظ‘ط±ظ‡ ط¹ظ†ط¯ ط±ط¨ط· ط¯ظˆظ…ظٹظ† ظ…ط®طµطµ ظ„ط§ط­ظ‚ط§ظ‹)
 const SITE_URL = "https://codetech-website-git-main-yasser-alashram.vercel.app";
-const SITE_NAME = "Code Tech | ظƒظˆط¯ طھظƒ";
+const SITE_NAME = "Code Tech | كود تك";
 
 // ==========================================
-// ًں“ٹ Metadata ط§ظ„ظƒط§ظ…ظ„ط© (SEO)
+// 📊 Metadata الكاملة (SEO)
 // ==========================================
 export const metadata: Metadata = {
-  // ًں”¹ ط§ظ„ط£ط³ط§ط³ظٹط§طھ
+  // 🔹 الأساسيات
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Code Tech | ظƒظˆط¯ طھظƒ - ظپط±ظٹظ‚ ط¨ط±ظ…ط¬ظٹ ظ…طھط®طµطµ ظپظٹ طµظ†ط¹ط§ط،",
+    default: "Code Tech | كود تك - فريق برمجي متخصص في صنعاء",
     template: "%s | Code Tech",
   },
   description:
-    "ظپط±ظٹظ‚ Code Tech ط§ظ„ط¨ط±ظ…ط¬ظٹط© ظپظٹ طµظ†ط¹ط§ط، - ظ†ط¨ظ†ظٹ ط£ظ†ط¸ظ…ط© ط¨ط±ظ…ط¬ظٹط© ط¨ط­ظ…ط§ظٹط© ظپط§ط¦ظ‚ط© ظˆط¯ظ‚ط© ط¹ط§ظ„ظٹط©. طھط·ظˆظٹط± ظ…ظˆط§ظ‚ط¹ ط§ظ„ظˆظٹط¨طŒ طھط·ط¨ظٹظ‚ط§طھ ط§ظ„ط¬ظˆط§ظ„طŒ ط§ظ„ط£ظ†ط¸ظ…ط© ط§ظ„ط¥ط¯ط§ط±ظٹط©طŒ ظˆظ…ط´ط§ط±ظٹط¹ ط§ظ„طھط®ط±ط¬. ط£ط³ط¹ط§ط± ظ…ظ†ط§ط³ط¨ط© ظ…ط¹ ط¥ظ…ظƒط§ظ†ظٹط© ط§ظ„طھط³ط¯ظٹط¯ ط¨ط§ظ„ط£ظ‚ط³ط§ط·.",
+    "فريق Code Tech البرمجية في صنعاء - نبني أنظمة برمجية بحماية فائقة ودقة عالية. تطوير مواقع الويب، تطبيقات الجوال، الأنظمة الإدارية، ومشاريع التخرج. أسعار مناسبة مع إمكانية التسديد بالأقساط.",
 
-  // ًں”¹ ط§ظ„ظƒظ„ظ…ط§طھ ط§ظ„ظ…ظپطھط§ط­ظٹط©
+  // 🔹 الكلمات المفتاحية
   keywords: [
     "Code Tech",
-    "ظƒظˆط¯ طھظƒ",
-    "ظپط±ظٹظ‚ ط¨ط±ظ…ط¬ظٹ",
-    "ط´ط±ظƒط© ط¨ط±ظ…ط¬ظٹط§طھ طµظ†ط¹ط§ط،",
-    "طھط·ظˆظٹط± ظ…ظˆط§ظ‚ط¹ ط§ظ„ظٹظ…ظ†",
-    "طھط·ظˆظٹط± طھط·ط¨ظٹظ‚ط§طھ طµظ†ط¹ط§ط،",
-    "ط£ظ†ط¸ظ…ط© ط¥ط¯ط§ط±ظٹط© ط§ظ„ظٹظ…ظ†",
-    "ظ…ط´ط§ط±ظٹط¹ طھط®ط±ط¬",
-    "طھطµظ…ظٹظ… ظ…ظˆط§ظ‚ط¹",
-    "ط¨ط±ظ…ط¬ط© ط§ظ„ظٹظ…ظ†",
+    "كود تك",
+    "فريق برمجي",
+    "شركة برمجيات صنعاء",
+    "تطوير مواقع اليمن",
+    "تطوير تطبيقات صنعاء",
+    "أنظمة إدارية اليمن",
+    "مشاريع تخرج",
+    "تصميم مواقع",
+    "برمجة اليمن",
     "developer yemen",
     "software company sanaa",
     "web development yemen",
     "mobile apps yemen",
   ],
 
-  // ًں”¹ ط§ظ„ظ…ط¤ظ„ظپظˆظ†
+  // 🔹 المؤلفون
   authors: [
     { name: "Yasser Alashram", url: "https://github.com/yasser77a" },
   ],
   creator: "Yasser Alashram",
   publisher: "Code Tech",
 
-  // ًں”¹ Canonical URL (ظٹظ…ظ†ط¹ ط§ظ„ظ…ط­طھظˆظ‰ ط§ظ„ظ…ظƒط±ط±)
+  // 🔹 Canonical URL (يمنع المحتوى المكرر)
   alternates: {
     canonical: "/",
     languages: {
@@ -66,36 +65,36 @@ export const metadata: Metadata = {
     },
   },
 
-  // ًں”¹ Open Graph (ظ„ظ„ظ…ط´ط§ط±ظƒط© ط¹ظ„ظ‰ Facebook, WhatsApp, LinkedIn)
+  // 🔹 Open Graph (للمشاركة على Facebook, WhatsApp, LinkedIn)
   openGraph: {
     type: "website",
     locale: "ar_YE",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: "Code Tech | ظƒظˆط¯ طھظƒ - ظپط±ظٹظ‚ ط¨ط±ظ…ط¬ظٹ ظ…طھط®طµطµ ظپظٹ طµظ†ط¹ط§ط،",
+    title: "Code Tech | كود تك - فريق برمجي متخصص في صنعاء",
     description:
-      "ظ†ط¨ظ†ظٹ ط£ظ†ط¸ظ…ط© ط¨ط±ظ…ط¬ظٹط© ط¨ط­ظ…ط§ظٹط© ظپط§ط¦ظ‚ط© ظˆط¯ظ‚ط© ط¹ط§ظ„ظٹط©. طھط·ظˆظٹط± ظ…ظˆط§ظ‚ط¹طŒ طھط·ط¨ظٹظ‚ط§طھطŒ ظˆط£ظ†ط¸ظ…ط© ط¨ط±ظ…ط¬ظٹط© ط¨ط¥ط´ط±ط§ظپ ظƒط§ط¯ط± ظ…طھط®طµطµ.",
+      "نبني أنظمة برمجية بحماية فائقة ودقة عالية. تطوير مواقع، تطبيقات، وأنظمة برمجية بإشراف كادر متخصص.",
     images: [
       {
         url: "/opengraph-image.png",
         width: 1200,
         height: 630,
-        alt: "Code Tech - ظپط±ظٹظ‚ ط¨ط±ظ…ط¬ظٹ ظپظٹ طµظ†ط¹ط§ط،",
+        alt: "Code Tech - فريق برمجي في صنعاء",
       },
     ],
   },
 
-  // ًں”¹ Twitter Card
+  // 🔹 Twitter Card
   twitter: {
     card: "summary_large_image",
-    title: "Code Tech | ظƒظˆط¯ طھظƒ",
+    title: "Code Tech | كود تك",
     description:
-      "ظ†ط¨ظ†ظٹ ط£ظ†ط¸ظ…ط© ط¨ط±ظ…ط¬ظٹط© ط¨ط­ظ…ط§ظٹط© ظپط§ط¦ظ‚ط© ظˆط¯ظ‚ط© ط¹ط§ظ„ظٹط©. طھط·ظˆظٹط± ظ…ظˆط§ظ‚ط¹طŒ طھط·ط¨ظٹظ‚ط§طھطŒ ظˆط£ظ†ط¸ظ…ط©.",
+      "نبني أنظمة برمجية بحماية فائقة ودقة عالية. تطوير مواقع، تطبيقات، وأنظمة.",
     images: ["/opengraph-image.png"],
     creator: "@yasser77a",
   },
 
-  // ًں”¹ ط§ظ„ط£ظٹظ‚ظˆظ†ط§طھ (Favicon ظƒط§ظ…ظ„)
+  // 🔹 الأيقونات (Favicon كامل)
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -110,12 +109,12 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
   },
 
-  // ًں”¹ ظ…ط¹ظ„ظˆظ…ط§طھ ط¥ط¶ط§ظپظٹط©
+  // 🔹 معلومات إضافية
   applicationName: "Code Tech",
   category: "technology",
   classification: "Software Development Company",
 
-  // ًں”¹ ظپظ‡ط±ط³ط© Google
+  // 🔹 فهرسة Google
   robots: {
     index: true,
     follow: true,
@@ -129,12 +128,12 @@ export const metadata: Metadata = {
     },
   },
 
-  // ًں”¹ ط§ظ„طھط­ظ‚ظ‚ ظ…ظ† ط§ظ„ظ…ظ„ظƒظٹط© (ط³ظ†ظ…ظ„ط£ظ‡ ظ„ط§ط­ظ‚ط§ظ‹ ظپظٹ Google Search Console)
+  // 🔹 التحقق من الملكية (سنملأه لاحقاً في Google Search Console)
   verification: {
-    google: "IYLTbCGTvMLSwA8jS0DQJD5LbRhBLsv040liVGcO9j8", // â†گ ط¶ط¹ ظƒظˆط¯ Google ظ‡ظ†ط§ ظ„ط§ط­ظ‚ط§ظ‹
+    google: "IYLTbCGTvMLSwA8jS0DQJD5LbRhBLsv040liVGcO9j8",
   },
 
-  // ًں”¹ ظ…ط¹ظ„ظˆظ…ط§طھ ط£ط®ط±ظ‰
+  // 🔹 معلومات أخرى
   other: {
     "theme-color": "#0B3DA8",
     "msapplication-TileColor": "#0B3DA8",
@@ -142,7 +141,7 @@ export const metadata: Metadata = {
 };
 
 // ==========================================
-// ًں“± Viewport (ظ„ظ„ط¬ظˆط§ظ„)
+// 📱 Viewport (للجوال)
 // ==========================================
 export const viewport: Viewport = {
   width: "device-width",
@@ -155,21 +154,21 @@ export const viewport: Viewport = {
 };
 
 // ==========================================
-// ًںڈ¢ Structured Data (JSON-LD)
+// 🏢 Structured Data (JSON-LD)
 // ==========================================
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Code Tech",
-  alternateName: "ظƒظˆط¯ طھظƒ",
+  alternateName: "كود تك",
   url: SITE_URL,
   logo: `${SITE_URL}/logo.png`,
   description:
-    "ظپط±ظٹظ‚ ط¨ط±ظ…ط¬ظٹ ظ…طھط®طµطµ ظپظٹ طھط·ظˆظٹط± ط§ظ„ط£ظ†ط¸ظ…ط© ظˆط§ظ„طھط·ط¨ظٹظ‚ط§طھ ظˆظ…ظˆط§ظ‚ط¹ ط§ظ„ظˆظٹط¨ ظپظٹ طµظ†ط¹ط§ط،طŒ ط§ظ„ظٹظ…ظ†.",
+    "فريق برمجي متخصص في تطوير الأنظمة والتطبيقات ومواقع الويب في صنعاء، اليمن.",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "ط§ظ„ط¯ط§ط¦ط±ظٹطŒ ط­ظٹ ط¬ط§ظ…ط¹ط© طµظ†ط¹ط§ط، ط§ظ„ظ‚ط¯ظٹظ…ط©",
-    addressLocality: "طµظ†ط¹ط§ط،",
+    streetAddress: "الدائري، حي جامعة صنعاء القديمة",
+    addressLocality: "صنعاء",
     addressCountry: "YE",
   },
   contactPoint: {
@@ -201,16 +200,16 @@ const structuredData = {
     name: "Yemen",
   },
   serviceType: [
-    "طھط·ظˆظٹط± ط§ظ„ط£ظ†ط¸ظ…ط©",
-    "طھط·ظˆظٹط± ط§ظ„طھط·ط¨ظٹظ‚ط§طھ",
-    "طھط·ظˆظٹط± ظ…ظˆط§ظ‚ط¹ ط§ظ„ظˆظٹط¨",
-    "طھطµظ…ظٹظ… ط¬ط±ط§ظپظٹظƒط³",
-    "ظ…ط´ط§ط±ظٹط¹ طھط®ط±ط¬",
+    "تطوير الأنظمة",
+    "تطوير التطبيقات",
+    "تطوير مواقع الويب",
+    "تصميم جرافيكس",
+    "مشاريع تخرج",
   ],
 };
 
 // ==========================================
-// ًں“„ Root Layout
+// 📄 Root Layout
 // ==========================================
 export default function RootLayout({
   children,
@@ -220,7 +219,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" data-scroll-behavior="smooth">
       <head>
-        {/* ًںڈ¢ Structured Data (JSON-LD) */}
+        {/* 🏢 Structured Data (JSON-LD) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
