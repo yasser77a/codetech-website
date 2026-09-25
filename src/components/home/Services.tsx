@@ -71,9 +71,9 @@ export default function Services() {
             <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
             خدماتنا المتميزة
           </span>
-          <h2 className="text-4xl lg:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+          <h2 className="text-4xl lg:text-6xl font-black text-slate-900 mb-6 leading-[1.3]">
             حلول برمجية
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+            <span className="block mt-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 pb-2">
               متكاملة واحترافية
             </span>
           </h2>
