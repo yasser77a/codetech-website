@@ -5,15 +5,17 @@ import "./globals.css";
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
   variable: "--font-cairo",
-  weight: ["400", "600", "700", "800", "900"],
+  weight: ["400", "700", "900"],
   display: "swap",
+  preload: true,
 });
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
   variable: "--font-tajawal",
-  weight: ["400", "500", "700", "800"],
+  weight: ["400", "700"],
   display: "swap",
+  preload: true,
 });
 
 const SITE_URL = "https://codetech-website-git-main-yasser-alashram.vercel.app";
