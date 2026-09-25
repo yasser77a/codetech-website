@@ -1,8 +1,60 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ==========================================
-   🌙 الوضع الليلي - شامل (Tailwind v4)
+   Code Tech - الألوان الرسمية من الشعار
    ========================================== */
 
-/* 🌐 الحاويات الرئيسية */
+@theme {
+  --color-brand-50:  #EBF1FF;
+  --color-brand-100: #D6E3FF;
+  --color-brand-200: #A8C1FF;
+  --color-brand-300: #7A9EFF;
+  --color-brand-400: #4C7BFF;
+  --color-brand-500: #0B3DA8;
+  --color-brand-600: #082B78;
+  --color-brand-700: #061F58;
+  --color-brand-800: #041538;
+  --color-brand-900: #020A1C;
+
+  --color-accent-500: #E31E24;
+  --color-accent-600: #C1151B;
+  --color-accent-700: #9C1015;
+
+  --color-dark:  #0A0A0A;
+  --color-light: #F8FAFC;
+  --color-gray:  #6C757D;
+
+  --font-sans: 'Cairo', 'Tajawal', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ==========================================
+   الإعدادات العامة
+   ========================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-light);
+  color: var(--color-dark);
+  font-family: var(--font-sans);
+  direction: rtl;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ==========================================
+   الوضع الليلي - شامل
+   ========================================== */
+
 html.dark {
   color-scheme: dark;
 }
@@ -12,37 +64,29 @@ html.dark body {
   color: #f1f5f9;
 }
 
-/* 🎨 الخلفيات البيضاء */
+/* الخلفيات */
 html.dark .bg-white,
 html.dark [class*="bg-white"] {
   background-color: #1e293b !important;
   color: #f1f5f9;
 }
 
-/* 🎨 الخلفيات الرمادية الفاتحة */
 html.dark .bg-slate-50,
-html.dark .bg-gray-50,
-html.dark [class*="bg-slate-50"],
-html.dark [class*="bg-gray-50"] {
+html.dark .bg-gray-50 {
   background-color: #0f172a !important;
 }
 
-/* 🎨 الخلفيات الرمادية */
 html.dark .bg-slate-100,
 html.dark .bg-gray-100 {
   background-color: #1e293b !important;
 }
 
-/* 🎨 الخلفيات الرمادية الداكنة */
 html.dark .bg-slate-200,
 html.dark .bg-gray-200 {
   background-color: #334155 !important;
 }
 
-/* ==========================================
-   📝 النصوص
-   ========================================== */
-
+/* النصوص */
 html.dark .text-gray-900,
 html.dark .text-slate-900,
 html.dark .text-black {
@@ -69,15 +113,7 @@ html.dark .text-slate-500 {
   color: #64748b !important;
 }
 
-html.dark .text-gray-400,
-html.dark .text-slate-400 {
-  color: #94a3b8 !important;
-}
-
-/* ==========================================
-   🔲 الحدود
-   ========================================== */
-
+/* الحدود */
 html.dark .border-gray-100,
 html.dark .border-slate-100 {
   border-color: #1e293b !important;
@@ -88,16 +124,7 @@ html.dark .border-slate-200 {
   border-color: #334155 !important;
 }
 
-html.dark .border-gray-300,
-html.dark .border-slate-300 {
-  border-color: #475569 !important;
-}
-
-/* ==========================================
-   📋 البطاقات والحاويات
-   ========================================== */
-
-/* بطاقات الخدمات */
+/* البطاقات */
 html.dark .group.bg-white,
 html.dark .rounded-3xl.bg-white,
 html.dark .rounded-2xl.bg-white {
@@ -105,37 +132,7 @@ html.dark .rounded-2xl.bg-white {
   border-color: #334155 !important;
 }
 
-/* Shadow */
-html.dark .shadow-sm,
-html.dark .shadow-md,
-html.dark .shadow-lg,
-html.dark .shadow-xl,
-html.dark .shadow-2xl {
-  --tw-shadow-color: rgba(0, 0, 0, 0.6);
-  --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.6), 0 2px 4px -2px rgba(0, 0, 0, 0.6);
-}
-
-/* ==========================================
-   🔘 الأزرار
-   ========================================== */
-
-/* الأزرار الفاتحة */
-html.dark .bg-slate-100.text-slate-700,
-html.dark .bg-gray-100.text-gray-700 {
-  background-color: #334155 !important;
-  color: #f1f5f9 !important;
-}
-
-/* زر التنقل بين الخدمات */
-html.dark button.bg-slate-900 {
-  background-color: #f1f5f9 !important;
-  color: #0f172a !important;
-}
-
-/* ==========================================
-   🎴 الحقول
-   ========================================== */
-
+/* الحقول */
 html.dark input,
 html.dark textarea,
 html.dark select {
@@ -149,95 +146,31 @@ html.dark textarea::placeholder {
   color: #64748b !important;
 }
 
-/* ==========================================
-   📊 الجداول
-   ========================================== */
-
-html.dark thead {
-  background-color: #0f172a !important;
-}
-
-html.dark tbody tr {
-  border-color: #334155 !important;
-}
-
-html.dark tbody tr:hover {
-  background-color: #334155 !important;
-}
-
-/* ==========================================
-   🎨 الأقسام الخاصة (Sections)
-   ========================================== */
-
-/* قسم Services (البطاقات البيضاء) */
+/* الأقسام */
 html.dark section.bg-gradient-to-b.from-white.to-slate-50 {
   background: linear-gradient(to bottom, #0f172a, #1e293b) !important;
 }
 
-/* قسم PortfolioTabs */
 html.dark section.bg-white {
   background-color: #0f172a !important;
 }
 
-/* قسم Reviews */
 html.dark section.bg-gray-50 {
   background-color: #1e293b !important;
 }
 
-/* CTA (يبقى كما هو - داكن أصلاً) */
-html.dark section .bg-gradient-to-br.from-brand-600 {
-  /* يبقى التصميم */
-}
-
-/* ==========================================
-   📱 Navbar
-   ========================================== */
-
+/* Navbar */
 html.dark nav.sticky {
   background-color: rgba(15, 23, 42, 0.95) !important;
   border-color: #1e293b !important;
 }
 
-/* ==========================================
-   🦶 Footer (يبقى كما هو - داكن أصلاً)
-   ========================================== */
-
+/* Footer */
 html.dark footer {
   background-color: #020617 !important;
 }
 
-/* ==========================================
-   🎬 مكونات Hero و ServicesShowcase
-   ========================================== */
-
-/* Hero يبقى داكن - يعمل في الوضعين */
-
-/* ServicesShowcase يبقى داكن */
-
-/* ==========================================
-   📊 الإحصائيات
-   ========================================== */
-
-html.dark .grid .bg-white {
-  background-color: #1e293b !important;
-}
-
-/* ==========================================
-   🔗 الروابط
-   ========================================== */
-
-html.dark a.text-slate-900 {
-  color: #f1f5f9 !important;
-}
-
-html.dark a.text-gray-900 {
-  color: #f1f5f9 !important;
-}
-
-/* ==========================================
-   🎨 Scrollbar
-   ========================================== */
-
+/* Scrollbar */
 html.dark ::-webkit-scrollbar-track {
   background: #0f172a;
 }
@@ -251,71 +184,35 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 }
 
 /* ==========================================
-   ✨ الانتقال السلس
+   أنيميشن
    ========================================== */
 
-* {
-  transition-property: background-color, border-color, color;
-  transition-duration: 200ms;
-  transition-timing-function: ease-out;
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-20px); }
 }
 
-/* منع الانتقال في العناصر الحساسة */
-.motion-safe\:transition-none,
-[class*="animate-"] {
-  transition: none !important;
+.animate-float {
+  animation: float 4s ease-in-out infinite;
 }
 
 /* ==========================================
-   🎨 نظام الألوان الجديد - CodeTech 2026
+   Scrollbar الأساسي
    ========================================== */
 
-:root {
-  /* الوضع النهاري */
-  --hero-bg-light: #E8F0FF;
-  --hero-bg-light-2: #F0F6FF;
-  --text-primary-light: #0A1F5C;
-  --text-secondary-light: #4B5B7C;
-  --accent-red: #E31E24;
-  --accent-blue: #1976D2;
-  --accent-blue-light: #42A5F5;
-  --card-light: #FFFFFF;
-  --border-light: #D6E3FF;
+::-webkit-scrollbar {
+  width: 10px;
 }
 
-html.dark {
-  /* الوضع الليلي */
-  --hero-bg-dark: #050B2E;
-  --hero-bg-dark-2: #0A1550;
-  --text-primary-dark: #FFFFFF;
-  --text-secondary-dark: #A8B8D8;
-  --card-dark: #0F1E3D;
-  --border-dark: #1E3A6F;
+::-webkit-scrollbar-track {
+  background: #F1F1F1;
 }
 
-/* ==========================================
-   🎨 Hero Section - جديد
-   ========================================== */
-
-/* الخلفية النهارية */
-.hero-section-light {
-  background: linear-gradient(135deg, #E8F0FF 0%, #F0F6FF 50%, #E0EAFF 100%);
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-500);
+  border-radius: 5px;
 }
 
-/* الخلفية الليلية */
-.hero-section-dark {
-  background: linear-gradient(135deg, #050B2E 0%, #0A1550 50%, #050B2E 100%);
-}
-
-/* عند تفعيل الوضع الليلي */
-html.dark .hero-section-light {
-  background: linear-gradient(135deg, #050B2E 0%, #0A1550 50%, #050B2E 100%);
-}
-
-html.dark .hero-section-light .text-hero-primary {
-  color: #FFFFFF !important;
-}
-
-html.dark .hero-section-light .text-hero-secondary {
-  color: #A8B8D8 !important;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-600);
 }

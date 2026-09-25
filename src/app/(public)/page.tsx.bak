@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -23,13 +24,13 @@ import CTA from "@/components/home/CTA";
 // ==========================================
 const heroSlides = [
   { src: "/logo.png", alt: "Code Tech Logo", label: "Code Tech", isLogo: true },
-  { src: "/images/hero/web-main.png", alt: "Web Development", label: "تطوير المواقع" },
-  { src: "/images/hero/mobile-main.png", alt: "Mobile Apps", label: "تطبيقات الجوال" },
-  { src: "/images/hero/system-main.png", alt: "Systems", label: "الأنظمة البرمجية" },
-  { src: "/images/hero/security-main.png", alt: "Security", label: "أنظمة الحماية" },
-  { src: "/images/hero/graphics-main.png", alt: "Graphics", label: "تصاميم جرافيكس" },
-  { src: "/images/hero/graduation-main.png", alt: "Graduation", label: "مشاريع التخرج" },
-  { src: "/images/hero/downloads-main.png", alt: "Downloads", label: "مكتبة التحميلات" },
+  { src: "/images/hero/web-development.jpg", alt: "Web Development", label: "تطوير المواقع" },
+  { src: "/images/hero/mobile-apps.jpg", alt: "Mobile Apps", label: "تطبيقات الجوال" },
+  { src: "/images/hero/systems.jpg", alt: "Systems", label: "الأنظمة البرمجية" },
+  { src: "/images/hero/security.jpg", alt: "Security", label: "أنظمة الحماية" },
+  { src: "/images/hero/graphics.jpg", alt: "Graphics", label: "تصاميم جرافيكس" },
+  { src: "/images/hero/graduation.jpg", alt: "Graduation", label: "مشاريع التخرج" },
+  { src: "/images/hero/downloads-library.jpg", alt: "Downloads", label: "مكتبة التحميلات" },
 ];
 
 export default function HomePage() {
