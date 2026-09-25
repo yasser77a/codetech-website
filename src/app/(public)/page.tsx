@@ -5,10 +5,10 @@ import Link from "next/link";
 import { ArrowLeft, MessageCircle, Sparkles, Star, TrendingUp, CreditCard, Zap } from "lucide-react";
 import Services from "@/components/home/Services";
 import WhyUs from "@/components/home/WhyUs";
+import ServicesShowcase from "@/components/home/ServicesShowcase";
 import PortfolioTabs from "@/components/home/PortfolioTabs";
 import Reviews from "@/components/home/Reviews";
 import CTA from "@/components/home/CTA";
-import ServicesShowcase from "@/components/home/ServicesShowcase";
 
 export default function HomePage() {
   return (
