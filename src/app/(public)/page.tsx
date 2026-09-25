@@ -11,7 +11,6 @@ import {
   Star,
   TrendingUp,
   CreditCard,
-  Zap,
 } from "lucide-react";
 import Services from "@/components/home/Services";
 import WhyUs from "@/components/home/WhyUs";
@@ -21,76 +20,26 @@ import Reviews from "@/components/home/Reviews";
 import CTA from "@/components/home/CTA";
 
 // ==========================================
-// 🖼️ شرائح الـ Hero (الشعار + 7 صور)
+// 🖼️ شرائح الـ Hero
 // ==========================================
 const heroSlides = [
-  {
-    type: "logo",
-    src: "/logo.png",
-    alt: "Code Tech Logo",
-    label: "Code Tech",
-    bgGlow: "rgba(59, 130, 246, 0.5)",
-  },
-  {
-    type: "image",
-    src: "/images/hero/web-main.png",
-    alt: "Web Development",
-    label: "تطوير المواقع",
-    bgGlow: "rgba(59, 130, 246, 0.5)",
-  },
-  {
-    type: "image",
-    src: "/images/hero/mobile-main.png",
-    alt: "Mobile Apps",
-    label: "تطبيقات الجوال",
-    bgGlow: "rgba(16, 185, 129, 0.5)",
-  },
-  {
-    type: "image",
-    src: "/images/hero/system-main.png",
-    alt: "Software Systems",
-    label: "الأنظمة البرمجية",
-    bgGlow: "rgba(139, 92, 246, 0.5)",
-  },
-  {
-    type: "image",
-    src: "/images/hero/security-main.png",
-    alt: "Security Systems",
-    label: "أنظمة الحماية",
-    bgGlow: "rgba(239, 68, 68, 0.5)",
-  },
-  {
-    type: "image",
-    src: "/images/hero/graphics-main.png",
-    alt: "Graphic Design",
-    label: "تصاميم جرافيكس",
-    bgGlow: "rgba(249, 115, 22, 0.5)",
-  },
-  {
-    type: "image",
-    src: "/images/hero/graduation-main.png",
-    alt: "Graduation Projects",
-    label: "مشاريع التخرج",
-    bgGlow: "rgba(20, 184, 166, 0.5)",
-  },
-  {
-    type: "image",
-    src: "/images/hero/downloads-main.png",
-    alt: "Downloads Library",
-    label: "مكتبة التحميلات",
-    bgGlow: "rgba(6, 182, 212, 0.5)",
-  },
+  { src: "/logo.png", alt: "Code Tech Logo", label: "Code Tech", isLogo: true },
+  { src: "/images/hero/web-development.jpg", alt: "Web Development", label: "تطوير المواقع" },
+  { src: "/images/hero/mobile-apps.jpg", alt: "Mobile Apps", label: "تطبيقات الجوال" },
+  { src: "/images/hero/systems.jpg", alt: "Systems", label: "الأنظمة البرمجية" },
+  { src: "/images/hero/security.jpg", alt: "Security", label: "أنظمة الحماية" },
+  { src: "/images/hero/graphics.jpg", alt: "Graphics", label: "تصاميم جرافيكس" },
+  { src: "/images/hero/graduation.jpg", alt: "Graduation", label: "مشاريع التخرج" },
+  { src: "/images/hero/downloads-library.jpg", alt: "Downloads", label: "مكتبة التحميلات" },
 ];
 
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // ✅ التبديل التلقائي كل 3 ثواني
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 3000);
-
     return () => clearInterval(timer);
   }, []);
 
@@ -98,152 +47,95 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950">
+
       {/* ==================== HERO ==================== */}
-      <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-brand-900 to-slate-900 text-white overflow-hidden flex items-center">
+      <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-hidden flex items-center">
+        
+        {/* شبكة */}
+        <div className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `linear-gradient(rgba(59,130,246,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.1) 1px, transparent 1px)`,
+            backgroundSize: "60px 60px",
+          }}
+        />
 
-        {/* شبكة متحركة */}
-        <div className="absolute inset-0 opacity-20">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `linear-gradient(rgba(59,130,246,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.1) 1px, transparent 1px)`,
-              backgroundSize: "60px 60px",
-            }}
-          />
-        </div>
-
-        {/* Blur effects */}
+        {/* Blur */}
         <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[150px]" />
         <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-purple-500/20 rounded-full blur-[150px]" />
 
         <div className="container mx-auto px-4 py-24 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            
-            {/* ==================== النص ==================== */}
+
+            {/* النص */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
               className="space-y-8"
             >
-              {/* شارة */}
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-lg border border-blue-400/30 px-5 py-2.5 rounded-full"
-              >
+              <div className="inline-flex items-center gap-2 bg-blue-500/20 backdrop-blur-lg border border-blue-400/30 px-5 py-2.5 rounded-full">
                 <Sparkles className="w-4 h-4 text-yellow-400" />
-                <span className="text-sm font-semibold">
-                  شركة برمجية رائدة في اليمن
-                </span>
-              </motion.div>
-
-              {/* العنوان */}
-              <div className="space-y-4">
-                <motion.h1
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-5xl lg:text-7xl font-black leading-[1.05] tracking-tight"
-                >
-                  نبني أنظمة
-                  <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500">
-                    برمجية ذكية
-                  </span>
-                </motion.h1>
-
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="text-xl text-slate-300 max-w-xl leading-relaxed"
-                >
-                  شريكك التقني في صنعاء لتطوير أنظمة، تطبيقات، ومواقع إلكترونية
-                  بأحدث التقنيات وأعلى معايير الجودة.
-                </motion.p>
+                <span className="text-sm font-semibold">شركة برمجية رائدة في اليمن</span>
               </div>
 
-              {/* المميزات السريعة */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="grid grid-cols-3 gap-3 max-w-lg"
-              >
-                {[
-                  { icon: Zap, label: "سريع" },
-                  { icon: Star, label: "موثوق" },
-                  { icon: CreditCard, label: "تقسيط" },
-                ].map((item, i) => (
-                  <div
-                    key={i}
-                    className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-3 flex items-center gap-2"
-                  >
-                    <item.icon className="w-5 h-5 text-blue-400" />
-                    <span className="text-sm font-semibold">{item.label}</span>
-                  </div>
-                ))}
-              </motion.div>
+              <h1 className="text-5xl lg:text-7xl font-black leading-[1.05] tracking-tight">
+                نبني أنظمة
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500">
+                  برمجية ذكية
+                </span>
+              </h1>
 
-              {/* الأزرار */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="flex flex-wrap gap-4 pt-2"
-              >
+              <p className="text-xl text-slate-300 max-w-xl leading-relaxed">
+                شريكك التقني في صنعاء لتطوير أنظمة، تطبيقات، ومواقع إلكترونية بأحدث التقنيات وأعلى معايير الجودة.
+              </p>
+
+              <div className="flex flex-wrap gap-4">
                 <a
                   href="https://wa.me/967775566442"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-8 py-4 rounded-2xl font-bold flex items-center gap-3 transition-all hover:scale-105 shadow-2xl shadow-green-500/30 text-lg overflow-hidden"
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-8 py-4 rounded-2xl font-bold flex items-center gap-3 transition-all hover:scale-105 shadow-2xl text-white"
                 >
-                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                  <MessageCircle className="w-6 h-6 relative z-10" />
-                  <span className="relative z-10">تواصل عبر واتساب</span>
+                  <MessageCircle className="w-6 h-6" />
+                  <span>تواصل عبر واتساب</span>
                 </a>
                 <Link
                   href="/portfolio"
-                  className="group bg-white/5 hover:bg-white/10 backdrop-blur-lg border-2 border-white/10 hover:border-white/30 px-8 py-4 rounded-2xl font-bold transition-all hover:scale-105 text-lg flex items-center gap-3"
+                  className="bg-white/5 hover:bg-white/10 backdrop-blur-lg border-2 border-white/10 hover:border-white/30 px-8 py-4 rounded-2xl font-bold transition-all hover:scale-105 flex items-center gap-3"
                 >
                   <span>تصفح أعمالنا</span>
-                  <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                  <ArrowLeft className="w-5 h-5" />
                 </Link>
-              </motion.div>
+              </div>
 
-              {/* الإحصائيات */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-                className="grid grid-cols-3 gap-6 pt-8 border-t border-white/10"
-              >
+              <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/10">
                 {[
                   { icon: Star, value: "4.5/5", label: "2,084 مراجعة", color: "text-yellow-400" },
                   { icon: TrendingUp, value: "+100", label: "مشروع منجز", color: "text-green-400" },
                   { icon: CreditCard, value: "أقساط", label: "تسديد مرن", color: "text-blue-400" },
-                ].map((stat, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <stat.icon className={`w-8 h-8 ${stat.color}`} />
-                    <div>
-                      <div className="text-xl font-black">{stat.value}</div>
-                      <div className="text-xs text-slate-400">{stat.label}</div>
+                ].map((stat, i) => {
+                  const Icon = stat.icon;
+                  return (
+                    <div key={i} className="flex items-center gap-3">
+                      <Icon className={`w-8 h-8 ${stat.color}`} />
+                      <div>
+                        <div className="text-xl font-black">{stat.value}</div>
+                        <div className="text-xs text-slate-400">{stat.label}</div>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </motion.div>
+                  );
+                })}
+              </div>
             </motion.div>
 
-            {/* ==================== الصور المتحركة ==================== */}
+            {/* الصور */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.3 }}
               className="relative flex justify-center items-center"
             >
-              {/* حلقات مضيئة */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <motion.div
                   animate={{ rotate: 360 }}
@@ -257,69 +149,39 @@ export default function HomePage() {
                 />
               </div>
 
-              {/* هالة متوهجة (تتغير مع الشريحة) */}
-              <motion.div
-                key={`glow-${currentSlide}`}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 0.7, scale: 1 }}
-                transition={{ duration: 1 }}
-                className="absolute w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none"
-                style={{
-                  background: `radial-gradient(circle, ${activeSlide.bgGlow} 0%, transparent 70%)`,
-                }}
-              />
-
-              {/* الصور (Slideshow) */}
-              <div className="relative w-full max-w-lg aspect-square">
+              <div className="relative w-full max-w-md aspect-square">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentSlide}
-                    initial={{ opacity: 0, scale: 0.85, rotateY: -15 }}
-                    animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                    exit={{ opacity: 0, scale: 0.85, rotateY: 15 }}
-                    transition={{ duration: 0.7, ease: "easeInOut" }}
-                    className="absolute inset-0 flex items-center justify-center"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.6 }}
+                    className="absolute inset-0 flex items-center justify-center p-8"
                   >
                     <Image
                       src={activeSlide.src}
                       alt={activeSlide.alt}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
+                      width={500}
+                      height={500}
                       priority={currentSlide === 0}
-                      className={`object-contain drop-shadow-[0_0_80px_rgba(59,130,246,0.5)] ${
-                        activeSlide.type === "logo" ? "animate-float" : ""
-                      }`}
-                      style={{
-                        mixBlendMode: activeSlide.type === "logo" ? "normal" : "screen",
-                        filter: activeSlide.type === "logo" ? "none" : "brightness(1.1) contrast(1.1)",
-                      }}
+                      className="object-contain w-full h-full drop-shadow-[0_0_60px_rgba(59,130,246,0.4)]"
                     />
                   </motion.div>
                 </AnimatePresence>
 
-                {/* اسم الشريحة */}
-                <motion.div
-                  key={`label-${currentSlide}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur border border-white/10 rounded-full px-4 py-1.5"
-                >
-                  <span className="text-xs font-semibold text-white">
-                    {activeSlide.label}
-                  </span>
-                </motion.div>
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur border border-white/10 rounded-full px-4 py-1.5">
+                  <span className="text-xs font-semibold text-white">{activeSlide.label}</span>
+                </div>
               </div>
 
-              {/* نقاط التنقل */}
-              <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+              <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex gap-2">
                 {heroSlides.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentSlide(i)}
                     className={`h-2 rounded-full transition-all ${
-                      i === currentSlide
-                        ? "w-8 bg-blue-400"
-                        : "w-2 bg-white/30 hover:bg-white/50"
+                      i === currentSlide ? "w-8 bg-blue-400" : "w-2 bg-white/30 hover:bg-white/50"
                     }`}
                     aria-label={`الشريحة ${i + 1}`}
                   />
@@ -329,7 +191,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* مؤشر التمرير للأسفل */}
+        {/* مؤشر التمرير */}
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
@@ -341,7 +203,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* ==================== بقية الأقسام ==================== */}
+      {/* ==================== الأقسام ==================== */}
       <Services />
       <WhyUs />
       <ServicesShowcase />
