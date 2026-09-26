@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowLeft, 
@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 // ==========================================
-// 📦 7 خدمات مع 3 صور لكل خدمة
+// 📦 7 خدمات بالترتيب المطلوب
 // ==========================================
 const services = [
   {
@@ -23,9 +23,9 @@ const services = [
     titleEn: "Web Development",
     description: "مواقع احترافية سريعة ومتوافقة مع محركات البحث ومتجاوبة مع كل الأجهزة",
     images: [
-      "/images/services/web-development.jpg",
-      "/images/services/web-development1.jpg",
-      "/images/services/web-development2.jpg",
+      "/images/services/web-development.png",
+      "/images/services/web-development1.png",
+      "/images/services/web-development2.png",
     ],
     icon: Globe,
     color: "from-blue-500 to-cyan-500",
@@ -37,9 +37,9 @@ const services = [
     titleEn: "Mobile Apps",
     description: "تطبيقات أندرويد وآيفون بأداء عالي وتصميم عصري يلبي احتياجاتك",
     images: [
-      "/images/services/mobile-apps.jpg",
-      "/images/services/mobile-apps1.jpg",
-      "/images/services/mobile-apps2.jpg",
+      "/images/services/mobile-apps.png",
+      "/images/services/mobile-apps1.png",
+      "/images/services/mobile-apps2.png",
     ],
     icon: Smartphone,
     color: "from-green-500 to-emerald-500",
@@ -51,9 +51,9 @@ const services = [
     titleEn: "Software Systems",
     description: "أنظمة إدارية متكاملة للمؤسسات والشركات بأعلى معايير الأمان والأداء",
     images: [
-      "/images/services/systems.jpg",
-      "/images/services/systems1.jpg",
-      "/images/services/systems2.jpg",
+      "/images/services/systems.png",
+      "/images/services/systems1.png",
+      "/images/services/systems2.png",
     ],
     icon: Monitor,
     color: "from-purple-500 to-indigo-500",
@@ -65,9 +65,9 @@ const services = [
     titleEn: "Security Systems",
     description: "أنظمة برمجية بحماية فائقة وتشفير متقدم لحماية بياناتك",
     images: [
-      "/images/services/security.jpg",
-      "/images/services/security1.jpg",
-      "/images/services/security2.jpg",
+      "/images/services/security.png",
+      "/images/services/security1.png",
+      "/images/services/security2.png",
     ],
     icon: Shield,
     color: "from-red-500 to-rose-500",
@@ -79,9 +79,9 @@ const services = [
     titleEn: "Graphic Design",
     description: "هويات بصرية وتصاميم إبداعية تعكس شخصية علامتك التجارية",
     images: [
-      "/images/services/graphics.jpg",
-      "/images/services/graphics1.jpg",
-      "/images/services/graphics2.jpg",
+      "/images/services/graphics.png",
+      "/images/services/graphics1.png",
+      "/images/services/graphics2.png",
     ],
     icon: Palette,
     color: "from-orange-500 to-amber-500",
@@ -93,9 +93,9 @@ const services = [
     titleEn: "Graduation Projects",
     description: "مشاريع تخرج وبحوثات للطلاب والطالبات بإشراف كادر متخصص",
     images: [
-      "/images/services/graduation.jpg",
-      "/images/services/graduation1.jpg",
-      "/images/services/graduation2.jpg",
+      "/images/services/graduation.png",
+      "/images/services/graduation1.png",
+      "/images/services/graduation2.png",
     ],
     icon: GraduationCap,
     color: "from-teal-500 to-cyan-500",
@@ -107,9 +107,9 @@ const services = [
     titleEn: "Downloads Library",
     description: "مكتبة شاملة للبرامج والأدوات والموارد التقنية التي تحتاجها",
     images: [
-      "/images/services/downloads-library.jpg",
-      "/images/services/downloads-library1.jpg",
-      "/images/services/downloads-library2.jpg",
+      "/images/services/downloads-library.png",
+      "/images/services/downloads-library1.png",
+      "/images/services/downloads-library2.png",
     ],
     icon: Download,
     color: "from-cyan-500 to-blue-500",
@@ -118,29 +118,78 @@ const services = [
 ];
 
 export default function ServicesShowcase() {
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [stage, setStage] = useState<0 | 1 | 2>(0);
-    const [isPaused, setIsPaused] = useState(false);
+  // ==========================================
+  // ✅ استخدام useRef لإدارة المؤشر (لضمان عدم إعادة التعيين)
+  // ==========================================
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [stage, setStage] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   
-    // 🆕 التمرير التلقائي بين المراحل
-    useEffect(() => {
-      const timer = setInterval(() => {
-        setStage((prev) => ((prev + 1) % 3) as 0 | 1 | 2);
-      }, 3000); // كل 4 ثواني
+  // لحساب الإجمالي الكلي للصور
+  const totalImages = services.reduce((acc, s) => acc + s.images.length, 0);
   
-      return () => clearInterval(timer);
-    }, [activeIndex]); // إعادة البدء عند تغيير الخدمة
-  
-    const activeService = services[activeIndex];
+  // استخدام useRef لتخزين الموضع الحالي في التسلسل الكلي
+  const positionRef = useRef(0);
 
-    const cycleStage = () => {
-        setStage((prev) => ((prev + 1) % 3) as 0 | 1 | 2);
-    };
+  const activeService = services[activeIndex];
+  const totalStages = activeService.images.length;
+
+  // ==========================================
+  // ✅ منطق التنقل التلقائي (مضمون 100%)
+  // ==========================================
+  useEffect(() => {
+    if (isPaused) return;
+
+    const timer = setInterval(() => {
+      // زيادة الموضع الحالي
+      positionRef.current = (positionRef.current + 1) % totalImages;
+      
+      // إيجاد الخدمة والمرحلة الجديدة
+      let counter = 0;
+      for (let i = 0; i < services.length; i++) {
+        if (positionRef.current < counter + services[i].images.length) {
+          setActiveIndex(i);
+          setStage(positionRef.current - counter);
+          break;
+        }
+        counter += services[i].images.length;
+      }
+    }, 2500);
+
+    return () => clearInterval(timer);
+  }, [isPaused, totalImages]);
+
+  // ==========================================
+  // ✅ عند الضغط على خدمة، انتقل إليها وابدأ من الصورة الأولى
+  // ==========================================
+  const handleServiceChange = (index: number) => {
+    setActiveIndex(index);
+    setStage(0);
+    // تحديث positionRef ليتوافق مع الموضع الجديد
+    let newPosition = 0;
+    for (let i = 0; i < index; i++) {
+      newPosition += services[i].images.length;
+    }
+    positionRef.current = newPosition;
+  };
+
+  // ==========================================
+  // ✅ عند الضغط على نقطة، انتقل لتلك الصورة
+  // ==========================================
+  const handleStageChange = (index: number) => {
+    setStage(index);
+    // تحديث positionRef
+    let newPosition = 0;
+    for (let i = 0; i < activeIndex; i++) {
+      newPosition += services[i].images.length;
+    }
+    positionRef.current = newPosition + index;
+  };
 
   return (
-    <section className="relative bg-slate-950 py-32 overflow-hidden">
+    <section className="services-showcase-section relative bg-slate-50 dark:bg-[#0a0a0f] py-32 overflow-hidden transition-colors duration-300">
       {/* خلفية متوهجة */}
-      <div className="absolute inset-0 opacity-30">
+      <div className="absolute inset-0 opacity-30 dark:opacity-30">
         <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[150px]" />
         <div className="absolute bottom-1/4 left-1/4 w-[600px] h-[600px] bg-purple-500/20 rounded-full blur-[150px]" />
       </div>
@@ -151,13 +200,13 @@ export default function ServicesShowcase() {
           <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
           خدماتنا المتميزة
         </span>
-        <h2 className="text-5xl lg:text-7xl font-black text-white mb-6 tracking-tight">
+        <h2 className="text-5xl lg:text-7xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">
           حلول{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500">
             برمجية ذكية
           </span>
         </h2>
-        <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+        <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
           اكتشف مجموعة شاملة من الخدمات التقنية الاحترافية
         </p>
       </div>
@@ -169,33 +218,129 @@ export default function ServicesShowcase() {
           {/* عرض الصور المتحركة */}
           <div className="relative h-[500px] md:h-[600px] flex items-center justify-center order-2 lg:order-1">
             
-            {/* هالة متوهجة */}
+            {/* ✅ هالة متوهجة مع أنيميشن (تعمل في الوضعين) */}
             <motion.div
               key={`halo-${activeIndex}`}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.4, scale: 1 }}
+              animate={{ 
+                opacity: [0.4, 0.8, 0.4], 
+                scale: [1, 1.2, 1] 
+              }}
+              transition={{ 
+                duration: 2.5, 
+                repeat: Infinity, 
+                ease: "easeInOut" 
+              }}
               className="absolute inset-0 rounded-full blur-[100px] pointer-events-none"
               style={{
                 background: `radial-gradient(circle, ${activeService.accentColor} 0%, transparent 70%)`,
               }}
             />
 
-            {/* الصور الثلاث */}
-            <div className="relative w-full max-w-2xl aspect-square" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} >
+            {/* ✅ توهج إضافي للوضع النهاري (أبيض/فضي) */}
+            <motion.div
+              key={`glow-light-${activeIndex}`}
+              animate={{ 
+                opacity: [0.5, 0.9, 0.5],
+                scale: [1, 1.15, 1]
+              }}
+              transition={{ 
+                duration: 2.5, 
+                repeat: Infinity, 
+                ease: "easeInOut",
+                delay: 0.3
+              }}
+              className="absolute inset-8 rounded-full blur-[80px] pointer-events-none dark:hidden"
+              style={{
+                background: `radial-gradient(circle, ${activeService.accentColor} 0%, transparent 70%)`,
+              }}
+            />
+
+            {/* حلقات دوارة */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-4 rounded-full border border-slate-400 dark:border-white/10 pointer-events-none"
+            />
+            <motion.div
+              animate={{ rotate: -360 }}
+              transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-12 rounded-full border border-slate-300 dark:border-white/5 pointer-events-none"
+            />
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-4 rounded-full border border-slate-400 dark:border-white/10 pointer-events-none"
+            />
+            <motion.div
+              animate={{ rotate: -360 }}
+              transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-12 rounded-full border border-slate-300 dark:border-white/5 pointer-events-none"
+            />
+
+
+
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+              className="absolute w-[420px] h-[420px] rounded-full border-2 border-dashed pointer-events-none border-slate-500/60 dark:border-white/20"
+            />
+            <motion.div
+              animate={{ rotate: -360 }}
+              transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+              className="absolute w-[340px] h-[340px] rounded-full border pointer-events-none
+                border-slate-400/50 dark:border-white/15"
+            />
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+              className="absolute w-[260px] h-[260px] rounded-full border-2 border-dotted pointer-events-none
+                border-slate-300/40 dark:border-white/10"
+            />
+            <motion.div
+              animate={{ rotate: -360 }}
+              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+              className="absolute w-[500px] h-[500px] rounded-full border border-dashed pointer-events-none opacity-40 dark:opacity-20"
+              style={{ 
+                borderColor: `${activeService.accentColor}80`,
+              }}
+            />
+
+            <div 
+              className="services-showcase-image relative w-full max-w-2xl aspect-square" 
+              onMouseEnter={() => setIsPaused(true)} 
+              onMouseLeave={() => setIsPaused(false)} 
+            >
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`${activeIndex}-${stage}`}
-                  initial={{ opacity: 0, scale: 0.9, rotateY: -20 }}
+                  initial={{ opacity: 0, scale: 0.85, rotateY: -20 }}
                   animate={{ opacity: 1, scale: 1, rotateY: 0 }}
                   exit={{ opacity: 0, scale: 1.1, rotateY: 20 }}
                   transition={{ duration: 0.5 }}
-                  className="absolute inset-0"
+                  className="absolute inset-0 flex items-center justify-center p-8"
                 >
-                <img
-                    src={activeService.images[stage]}
-                    alt={`${activeService.title} - المرحلة ${stage + 1}`}
-                    className="w-full h-full object-contain drop-shadow-[0_0_60px_rgba(59,130,246,0.5)]"
-                />
+                  {/* ✅ استخدام motion.div للتحكم في التوهج بشكل موثوق */}
+                  <motion.div
+                    animate={{
+                      filter: [
+                        `drop-shadow(0 0 50px ${activeService.accentColor}CC) drop-shadow(0 0 100px ${activeService.accentColor}80)`,
+                        `drop-shadow(0 0 80px ${activeService.accentColor}FF) drop-shadow(0 0 160px ${activeService.accentColor}AA)`,
+                        `drop-shadow(0 0 50px ${activeService.accentColor}CC) drop-shadow(0 0 100px ${activeService.accentColor}80)`,
+                      ],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                    className="w-full h-full flex items-center justify-center"
+                  >
+                    <img
+                      src={activeService.images[stage]}
+                      alt={`${activeService.title} - ${stage + 1}`}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </motion.div>
                 </motion.div>
               </AnimatePresence>
 
@@ -204,18 +349,35 @@ export default function ServicesShowcase() {
                 key={`info-${activeIndex}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute bottom-0 right-0 bg-slate-900/90 backdrop-blur border border-white/10 rounded-2xl p-4 z-10"
+                className="absolute bottom-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-slate-200 dark:border-white/10 rounded-2xl p-4 z-10 shadow-lg"
               >
-                <div className="text-xs text-slate-400 mb-1">
+                <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">
                   {activeService.titleEn}
                 </div>
-                <div className="text-lg font-bold text-white">
+                <div className="text-lg font-bold text-slate-900 dark:text-white">
                   {activeService.title}
                 </div>
                 <div className="text-xs mt-1" style={{ color: activeService.accentColor }}>
-                  المرحلة: {stage === 0 ? "عرض عام" : stage === 1 ? "تفاصيل" : "تفكيك كامل"}
+                  صورة {stage + 1} من {totalStages}
                 </div>
               </motion.div>
+
+              {/* مؤشرات الصور (Dots) */}
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                {activeService.images.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleStageChange(idx)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      idx === stage 
+                        ? "w-8" 
+                        : "w-2 bg-slate-300 dark:bg-white/20 hover:bg-slate-400 dark:hover:bg-white/40"
+                    }`}
+                    style={idx === stage ? { background: activeService.accentColor } : undefined}
+                    aria-label={`الذهاب إلى الصورة ${idx + 1}`}
+                  />
+                ))}
+              </div>
 
             </div>
           </div>
@@ -228,18 +390,15 @@ export default function ServicesShowcase() {
               return (
                 <motion.button
                   key={service.id}
-                  onClick={() => {
-                    setActiveIndex(index);
-                    setStage(0);
-                  }}
+                  onClick={() => handleServiceChange(index)}
                   initial={{ opacity: 0, x: 50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08 }}
-                  className={`w-full text-right p-5 rounded-2xl border transition-all duration-500 group relative overflow-hidden ${
+                  className={`services-showcase-item w-full text-right p-5 rounded-2xl border transition-all duration-500 group relative overflow-hidden ${
                     isActive
-                      ? "bg-white/10 border-white/30 shadow-2xl"
-                      : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
+                      ? "bg-white dark:bg-white/10 border-purple-400 dark:border-white/30 shadow-2xl"
+                      : "bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 hover:border-slate-300 dark:hover:border-white/20"
                   }`}
                 >
                   <div
@@ -260,14 +419,14 @@ export default function ServicesShowcase() {
                     <div className="flex-1 min-w-0">
                       <h3
                         className={`text-lg font-bold mb-1 transition-colors ${
-                          isActive ? "text-white" : "text-slate-300"
+                          isActive ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300"
                         }`}
                       >
                         {service.title}
                       </h3>
                       <p
                         className={`text-xs leading-relaxed transition-colors line-clamp-1 ${
-                          isActive ? "text-slate-300" : "text-slate-500"
+                          isActive ? "text-slate-600 dark:text-slate-300" : "text-slate-500 dark:text-slate-500"
                         }`}
                       >
                         {service.description}

@@ -10,53 +10,53 @@ export default function Services() {
       title: "أنظمة سطح المكتب",
       description: "أنظمة إدارية متكاملة للمؤسسات والشركات بأعلى معايير الأمان والأداء",
       color: "from-blue-500 to-blue-700",
-      bgColor: "bg-blue-50",
-      textColor: "text-blue-600",
+      bgColor: "bg-blue-50 dark:bg-blue-500/10",
+      textColor: "text-blue-600 dark:text-blue-400",
     },
     {
       icon: Globe,
       title: "مواقع الويب",
       description: "مواقع احترافية سريعة ومتوافقة مع محركات البحث ومتجاوبة مع كل الأجهزة",
       color: "from-purple-500 to-purple-700",
-      bgColor: "bg-purple-50",
-      textColor: "text-purple-600",
+      bgColor: "bg-purple-50 dark:bg-purple-500/10",
+      textColor: "text-purple-600 dark:text-purple-400",
     },
     {
       icon: Smartphone,
       title: "تطبيقات الجوال",
       description: "تطبيقات أندرويد وآيفون بأداء عالي وتصميم عصري يلبي احتياجاتك",
       color: "from-green-500 to-green-700",
-      bgColor: "bg-green-50",
-      textColor: "text-green-600",
+      bgColor: "bg-green-50 dark:bg-green-500/10",
+      textColor: "text-green-600 dark:text-green-400",
     },
     {
       icon: Shield,
       title: "أنظمة الحماية",
       description: "أنظمة برمجية بحماية فائقة وتشفير متقدم لحماية بياناتك",
       color: "from-red-500 to-red-700",
-      bgColor: "bg-red-50",
-      textColor: "text-red-600",
+      bgColor: "bg-red-50 dark:bg-red-500/10",
+      textColor: "text-red-600 dark:text-red-400",
     },
     {
       icon: Palette,
       title: "تصاميم جرافيكس",
       description: "هويات بصرية وتصاميم إبداعية تعكس شخصية علامتك التجارية",
       color: "from-orange-500 to-orange-700",
-      bgColor: "bg-orange-50",
-      textColor: "text-orange-600",
+      bgColor: "bg-orange-50 dark:bg-orange-500/10",
+      textColor: "text-orange-600 dark:text-orange-400",
     },
     {
       icon: GraduationCap,
       title: "مشاريع التخرج",
       description: "مشاريع تخرج وبحوثات للطلاب والطالبات بإشراف كادر متخصص",
       color: "from-teal-500 to-teal-700",
-      bgColor: "bg-teal-50",
-      textColor: "text-teal-600",
+      bgColor: "bg-teal-50 dark:bg-teal-500/10",
+      textColor: "text-teal-600 dark:text-teal-400",
     },
   ];
 
   return (
-    <section className="py-32 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
+    <section className="py-32 bg-gradient-to-b from-white to-slate-50 dark:from-[#0a0a0f] dark:to-[#0d0d14] relative overflow-hidden transition-colors duration-300">
       <div className="container mx-auto px-4">
         
         {/* العنوان */}
@@ -67,17 +67,17 @@ export default function Services() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-20"
         >
-          <span className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-full font-bold text-sm mb-4 border border-blue-100">
+          <span className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-full font-bold text-sm mb-4 border border-blue-100 dark:border-blue-500/20">
             <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
             خدماتنا المتميزة
           </span>
-          <h2 className="text-4xl lg:text-6xl font-black text-slate-900 mb-6 leading-[1.3]">
+          <h2 className="text-4xl lg:text-6xl font-black text-slate-900 dark:text-white mb-6 leading-[1.3]">
             حلول برمجية
-            <span className="block mt-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 pb-2">
+            <span className="block mt-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 pb-2">
               متكاملة واحترافية
             </span>
           </h2>
-          <p className="text-xl text-slate-600 leading-relaxed">
+          <p className="text-xl text-slate-600 dark:text-slate-400 leading-relaxed">
             نقدم مجموعة شاملة من الخدمات التقنية بأعلى معايير الجودة
             وأسعار منافسة مع إمكانية التسديد بالأقساط
           </p>
@@ -95,7 +95,7 @@ export default function Services() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -8 }}
-                className="group relative bg-white rounded-3xl p-8 shadow-sm hover:shadow-2xl transition-all duration-500 border border-slate-100 overflow-hidden"
+                className="group relative bg-white dark:bg-[#12121a] rounded-3xl p-8 shadow-sm hover:shadow-2xl transition-all duration-500 border border-slate-100 dark:border-white/10 overflow-hidden"
               >
                 {/* خلفية متدرجة عند التحويم */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
@@ -106,12 +106,12 @@ export default function Services() {
                 </div>
 
                 {/* العنوان */}
-                <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {service.title}
                 </h3>
 
                 {/* الوصف */}
-                <p className="text-slate-600 leading-relaxed mb-6">
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
                   {service.description}
                 </p>
 
@@ -138,7 +138,7 @@ export default function Services() {
         >
           <a
             href="/services"
-            className="inline-flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all hover:scale-105 shadow-xl"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-lg transition-all hover:scale-105 shadow-xl bg-white hover:bg-slate-50 text-purple-700 border-2 border-purple-300 shadow-purple-500/10 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-white dark:border-transparent"
           >
             🎯 عرض كل الخدمات
             <ArrowLeft className="w-5 h-5" />

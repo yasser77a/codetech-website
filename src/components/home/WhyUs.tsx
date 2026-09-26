@@ -21,9 +21,9 @@ export default function WhyUs() {
   ];
 
   return (
-    <section className="py-32 bg-slate-900 text-white relative overflow-hidden">
+    <section className="why-us-section py-32 bg-slate-900 dark:bg-[#0a0a0f] text-white relative overflow-hidden transition-colors duration-300">
       {/* خلفية */}
-      <div className="absolute inset-0 opacity-20">
+      <div className="absolute inset-0 opacity-20 dark:opacity-20">
         <div className="absolute inset-0" 
              style={{
                backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59,130,246,0.5) 1px, transparent 0)`,
@@ -91,7 +91,7 @@ export default function WhyUs() {
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
                   whileHover={{ y: -5, scale: 1.02 }}
-                  className="group bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-blue-400/30 transition-all duration-300"
+                  className="why-us-card group bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-blue-400/30 transition-all duration-300"
                 >
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                     <Icon className="w-6 h-6 text-white" strokeWidth={2} />

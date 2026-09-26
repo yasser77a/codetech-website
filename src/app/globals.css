@@ -3,11 +3,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ==========================================
-   Code Tech - الألوان الرسمية من الشعار
+   Code Tech - الألوان الرسمية
    ========================================== */
 
 @theme {
-  /* الأزرق الأساسي من الشعار */
   --color-brand-50:  #EBF1FF;
   --color-brand-100: #D6E3FF;
   --color-brand-200: #A8C1FF;
@@ -19,17 +18,14 @@
   --color-brand-800: #041538;
   --color-brand-900: #020A1C;
 
-  /* الأحمر من الشعار */
   --color-accent-500: #E31E24;
   --color-accent-600: #C1151B;
   --color-accent-700: #9C1015;
 
-  /* الألوان المحايدة */
   --color-dark:  #0A0A0F;
   --color-light: #F8FAFC;
   --color-gray:  #6C757D;
 
-  /* الخطوط */
   --font-sans: 'Cairo', 'Tajawal', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
@@ -40,6 +36,7 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -54,13 +51,12 @@ body {
   direction: rtl;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
   transition: background-color 0.3s ease, color 0.3s ease;
   overflow-x: hidden;
 }
 
 /* ==========================================
-   الوضع الليلي - شامل
+   🌙 الوضع الليلي (Dark Mode)
    ========================================== */
 
 html.dark {
@@ -72,306 +68,317 @@ html.dark body {
   color: #f1f5f9;
 }
 
-/* الخلفيات */
-html.dark .bg-white,
-html.dark [class*="bg-white"] {
-  background-color: #1e293b !important;
-  color: #f1f5f9;
+/* ==========================================
+   ☀️ الوضع النهاري (Light Mode) - شامل
+   ========================================== */
+
+html:not(.dark) body {
+  background: linear-gradient(180deg, #f0f4ff 0%, #ffffff 100%);
+  color: #0a0a0f;
 }
 
-html.dark .bg-slate-50,
-html.dark .bg-gray-50 {
-  background-color: #0f172a !important;
+html:not(.dark) section {
+  color: #0a0a0f;
 }
 
-html.dark .bg-slate-100,
-html.dark .bg-gray-100 {
-  background-color: #1e293b !important;
+/* ── النصوص الأساسية ── */
+html:not(.dark) .text-white:not(.keep-white):not(.bg-\[\#0a0a0f\] *):not(.bg-\[\#0d0d14\] *):not(.bg-\[\#12121a\] *):not([class*="from-brand"] *):not([class*="from-purple-500"] *):not(.no-light-override) {
+  color: #0a0a0f !important;
 }
 
-html.dark .bg-slate-200,
-html.dark .bg-gray-200 {
-  background-color: #334155 !important;
+html:not(.dark) .text-slate-300:not(.bg-\[\#0a0a0f\] *):not(.bg-\[\#0d0d14\] *) {
+  color: #334155 !important;
 }
 
-/* النصوص */
-html.dark .text-gray-900,
-html.dark .text-slate-900,
-html.dark .text-black {
-  color: #f1f5f9 !important;
+html:not(.dark) .text-slate-400:not(.bg-\[\#0a0a0f\] *):not(.bg-\[\#0d0d14\] *) {
+  color: #475569 !important;
 }
 
-html.dark .text-gray-800,
-html.dark .text-slate-800 {
+html:not(.dark) .text-slate-500:not(.bg-\[\#0a0a0f\] *):not(.bg-\[\#0d0d14\] *) {
+  color: #64748b !important;
+}
+
+
+
+html:not(.dark) .bg-white:not(.bg-\[\#0a0a0f\] *):not(.bg-\[\#0d0d14\] *) {
+  background-color: #ffffff !important;
+  color: #0a0a0f !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) [class*="backdrop-blur"]:not(.bg-\[\#0a0a0f\] *):not(.bg-\[\#0d0d14\] *) {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) [class*="bg-white/5"]:not(.bg-\[\#0a0a0f\] *):not(.bg-\[\#0d0d14\] *):not(.bg-\[\#12121a\] *):not(.keep-dark-bg) {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) [class*="bg-white/10"]:not(.bg-\[\#0a0a0f\] *):not(.bg-\[\#0d0d14\] *):not(.bg-\[\#12121a\] *):not(.keep-dark-bg) {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* ══════════════════════════════════════════
+   🛡️ حماية العناصر الداكنة (تبقى داكنة)
+   ══════════════════════════════════════════ */
+
+html:not(.dark) .keep-dark-bg,
+html:not(.dark) .keep-dark-bg * {
+  color-scheme: dark;
+}
+
+html:not(.dark) .keep-dark-bg {
+  background-color: #0d0d14 !important;
+}
+
+html:not(.dark) .keep-dark-bg .bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+html:not(.dark) .keep-dark-bg [class*="text-white"],
+html:not(.dark) .keep-dark-bg [class*="text-slate-3"],
+html:not(.dark) .keep-dark-bg [class*="text-slate-4"] {
   color: #e2e8f0 !important;
 }
 
-html.dark .text-gray-700,
-html.dark .text-slate-700 {
-  color: #cbd5e1 !important;
+html:not(.dark) .keep-dark-bg [class*="border-white"] {
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-html.dark .text-gray-600,
-html.dark .text-slate-600 {
-  color: #94a3b8 !important;
+/* ── Navbar ── */
+html:not(.dark) nav.sticky {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: #e2e8f0 !important;
 }
 
-html.dark .text-gray-500,
-html.dark .text-slate-500 {
+html:not(.dark) nav ul li a {
+  color: #334155 !important;
+}
+
+html:not(.dark) nav ul li a:hover {
+  color: #8B5CF6 !important;
+}
+
+/* ── Footer ── */
+html:not(.dark) footer {
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%) !important;
+}
+
+html:not(.dark) footer h3 {
+  color: #0a0a0f !important;
+}
+
+html:not(.dark) footer li,
+html:not(.dark) footer p {
+  color: #475569 !important;
+}
+
+html:not(.dark) footer a {
+  color: #475569 !important;
+}
+
+html:not(.dark) footer a:hover {
+  color: #8B5CF6 !important;
+}
+
+html:not(.dark) footer .text-blue-200,
+html:not(.dark) footer .text-blue-300 {
   color: #64748b !important;
 }
 
-/* الحدود */
-html.dark .border-gray-100,
-html.dark .border-slate-100 {
-  border-color: #1e293b !important;
-}
+/* ══════════════════════════════════════════
+   🎯 تخصيص الأقسام المطلوبة (Light Mode)
+   ══════════════════════════════════════════ */
 
-html.dark .border-gray-200,
-html.dark .border-slate-200 {
-  border-color: #334155 !important;
-}
+/* 1. إحصائيات الهيرو */
+html:not(.dark) .hero-stats .stat-value { color: #0a0a0f !important; }
+html:not(.dark) .hero-stats .stat-label { color: #64748b !important; }
 
-/* البطاقات */
-html.dark .group.bg-white,
-html.dark .rounded-3xl.bg-white,
-html.dark .rounded-2xl.bg-white {
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
-}
+/* 2. الفريق المؤسس */
+html:not(.dark) .team-member-name { color: #0a0a0f !important; }
+html:not(.dark) .team-member-role { color: #64748b !important; }
+html:not(.dark) .team-avatar-ring { background: linear-gradient(135deg, #e2e8f0, #f1f5f9) !important; }
+html:not(.dark) .team-avatar-inner { background-color: #ffffff !important; color: #0a0a0f !important; }
+html:not(.dark) .team-avatar-dot { border-color: #ffffff !important; }
 
-/* الحقول */
-html.dark input,
-html.dark textarea,
-html.dark select {
-  background-color: #0f172a !important;
-  color: #f1f5f9 !important;
-  border-color: #334155 !important;
+/* 3. أنظمة ERP المتكاملة */
+html:not(.dark) .erp-section { background-color: #f8fafc !important; }
+html:not(.dark) .erp-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.05) !important;
 }
-
-html.dark input::placeholder,
-html.dark textarea::placeholder {
+html:not(.dark) .erp-card h3, html:not(.dark) .erp-card h4, html:not(.dark) .erp-card .text-white { color: #0a0a0f !important; }
+html:not(.dark) .erp-card p, html:not(.dark) .erp-card span { color: #475569 !important; }
+html:not(.dark) .erp-tab-active { color: #ffffff !important; }
+html:not(.dark) .erp-tab-inactive {
+  background-color: #f1f5f9 !important;
   color: #64748b !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) .erp-dashboard-bg {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) .erp-dashboard-header {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
 }
 
-/* الأقسام */
-html.dark section.bg-gradient-to-b.from-white.to-slate-50 {
-  background: linear-gradient(to bottom, #0f172a, #1e293b) !important;
+
+/* 4. لماذا Code Tech؟ */
+html:not(.dark) .why-us-section { background-color: #ffffff !important; }
+html:not(.dark) .why-us-card {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) .why-us-card h3, html:not(.dark) .why-us-card .text-white { color: #0a0a0f !important; }
+html:not(.dark) .why-us-card p { color: #475569 !important; }
+
+/* 5. كيف نعمل؟ */
+html:not(.dark) .process-section { background-color: #f8fafc !important; }
+html:not(.dark) .process-step h3 { color: #0a0a0f !important; }
+html:not(.dark) .process-step p { color: #475569 !important; }
+html:not(.dark) .process-line { background: linear-gradient(to left, #3B82F6, #8B5CF6, #10B981) !important; }
+html:not(.dark) .process-number {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
 }
 
-html.dark section.bg-white {
-  background-color: #0f172a !important;
+/* 6. مشاريع حقيقية (Websites) */
+html:not(.dark) .websites-section { background-color: #ffffff !important; }
+html:not(.dark) .website-card {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) .website-card h3 { color: #0a0a0f !important; }
+html:not(.dark) .website-card p { color: #475569 !important; }
+
+/* 7. تطبيقاتنا (Apps) */
+html:not(.dark) .apps-section { background-color: #f8fafc !important; }
+html:not(.dark) .app-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) .app-card h3 { color: #0a0a0f !important; }
+html:not(.dark) .app-card p { color: #475569 !important; }
+
+/* 8. حلول برمجية ذكية (Services Showcase) */
+html:not(.dark) .services-showcase-section { background-color: #ffffff !important; }
+html:not(.dark) .services-showcase-image {
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) .services-showcase-item {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) .services-showcase-item h3 { color: #0a0a0f !important; }
+html:not(.dark) .services-showcase-item p { color: #475569 !important; }
+
+/* 9. باقات تناسب احتياجك (Pricing) */
+html:not(.dark) .pricing-section { background-color: #f8fafc !important; }
+html:not(.dark) .pricing-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) .pricing-card h3 { color: #0a0a0f !important; }
+html:not(.dark) .pricing-card p { color: #475569 !important; }
+html:not(.dark) .pricing-card ul li { color: #334155 !important; }
+html:not(.dark) .pricing-card .text-slate-600 { color: #64748b !important; }
+
+/* 10. الأسئلة الشائعة (FAQ) */
+html:not(.dark) .faq-section { background-color: #ffffff !important; }
+html:not(.dark) .faq-item {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) .faq-item button { color: #0a0a0f !important; }
+html:not(.dark) .faq-item .text-slate-400 { color: #475569 !important; }
+
+/* 11. جاهز لبدء مشروعك؟ (CTA) */
+html:not(.dark) .cta-section { background-color: #f8fafc !important; }
+html:not(.dark) .cta-card {
+  background: linear-gradient(135deg, #ffffff, #f1f5f9) !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08) !important;
+}
+html:not(.dark) .cta-card h2 { color: #0a0a0f !important; }
+html:not(.dark) .cta-card p { color: #475569 !important; }
+html:not(.dark) .cta-card .text-slate-400 { color: #64748b !important; }
+
+/* 12. مشاريع من إنجازنا (PortfolioTabs) */
+html:not(.dark) .portfolio-tabs-section { background-color: #ffffff !important; }
+html:not(.dark) .portfolio-tab-active {
+  background-color: #8B5CF6 !important;
+  color: #ffffff !important;
+}
+html:not(.dark) .portfolio-tab-inactive {
+  background-color: #f1f5f9 !important;
+  color: #64748b !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) .portfolio-card {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
 }
 
-html.dark section.bg-gray-50 {
-  background-color: #1e293b !important;
+/* 13. ماذا يقول عملاؤنا؟ (Reviews) */
+html:not(.dark) .reviews-section { background-color: #f8fafc !important; }
+html:not(.dark) .review-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
 }
+html:not(.dark) .review-card p { color: #475569 !important; }
 
-/* Navbar */
-html.dark nav.sticky {
-  background-color: rgba(15, 23, 42, 0.95) !important;
-  border-color: #1e293b !important;
-}
+/* ── Scrollbar ── */
+html:not(.dark) ::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0a0a0f; }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #8B5CF6, #3B82F6); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #A78BFA, #60A5FA); }
+html.dark ::-webkit-scrollbar-track { background: #0f172a; }
+::selection { background: #8B5CF6; color: #ffffff; }
+button:focus-visible, a:focus-visible { outline: 2px solid #8B5CF6; outline-offset: 2px; }
 
-/* Footer */
-html.dark footer {
-  background-color: #020617 !important;
-}
-
-/* ==========================================
+/* ══════════════════════════════════════════
    🎬 Animations
-   ========================================== */
-
-/* Float للشعار */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%      { transform: translateY(-20px); }
-}
-
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
-/* Float بطيء للصور */
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px); }
-  50%      { transform: translateY(-12px); }
-}
-
-.animate-float-slow {
-  animation: float-slow 5s ease-in-out infinite;
-}
-
-/* Marquee للخدمات */
+   ══════════════════════════════════════════ */
 @keyframes marquee {
-  0% { transform: translateX(0); }
+  0%   { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
 }
 
 .animate-marquee {
-  animation: marquee 30s linear infinite;
+  animation: marquee 40s linear infinite;
+  will-change: transform;
+  display: flex;
+  width: max-content;
 }
 
 .animate-marquee:hover {
   animation-play-state: paused;
 }
 
-/* Pulse Glow */
-@keyframes pulse-glow {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.05);
-  }
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
-}
-
-/* Rotate Slow */
-@keyframes rotate-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.animate-rotate-slow {
-  animation: rotate-slow 25s linear infinite;
-}
-
-/* Shine Effect */
-@keyframes shine {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-
-.animate-shine {
-  background-size: 200% auto;
-  animation: shine 3s linear infinite;
-}
-
-/* Gradient Move */
-@keyframes gradient-move {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-.animate-gradient-move {
-  background-size: 200% auto;
-  animation: gradient-move 6s ease infinite;
-}
-
-/* ==========================================
-   🎨 خلفيات مساعدة
-   ========================================== */
-
-.bg-radial-purple {
-  background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.15), transparent 60%);
-}
-
-.bg-radial-blue {
-  background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15), transparent 60%);
-}
-
-.bg-radial-cyan {
-  background: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.15), transparent 60%);
-}
-
-/* ==========================================
-   ✨ Scrollbar
-   ========================================== */
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #0a0a0f;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #8B5CF6, #3B82F6);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #A78BFA, #60A5FA);
-}
-
-html.dark ::-webkit-scrollbar-track {
-  background: #0f172a;
-}
-
-html.dark ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #8B5CF6, #3B82F6);
-}
-
-html.dark ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #A78BFA, #60A5FA);
-}
-
-/* ==========================================
-   🖼️ تحسين الصور
-   ========================================== */
-
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* ==========================================
-   ✍️ تحسين التحديد
-   ========================================== */
-
-::selection {
-  background: #8B5CF6;
-  color: #ffffff;
-}
-
-::-moz-selection {
-  background: #8B5CF6;
-  color: #ffffff;
-}
-
-/* ==========================================
-   🎯 Focus Ring
-   ========================================== */
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible {
-  outline: 2px solid #8B5CF6;
-  outline-offset: 2px;
-  border-radius: 8px;
-}
-
-/* منع الـ Tap Highlight */
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* ==========================================
-   📱 Responsive Fixes
-   ========================================== */
-
+/* ✅ سرعة أسرع للجوال */
 @media (max-width: 768px) {
   .animate-marquee {
-    animation-duration: 20s;
+    animation-duration: 12s;
   }
 }
 
-/* تقليل الحركة للمستخدمين الحساسين */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+.animate-float { animation: float 4s ease-in-out infinite; }
+@keyframes pulse-glow { 0%, 100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.05); } }
+.animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+@keyframes rotate-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.animate-rotate-slow { animation: rotate-slow 25s linear infinite; }
+@keyframes shine { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+.animate-shine { background-size: 200% auto; animation: shine 3s linear infinite; }
+@keyframes gradient-move { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+.animate-gradient-move { background-size: 200% auto; animation: gradient-move 6s ease infinite; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
+

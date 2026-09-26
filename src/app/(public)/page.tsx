@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -39,14 +39,14 @@ import Reviews from "@/components/home/Reviews";
 import CTA from "@/components/home/CTA";
 
 // ==========================================
-// 👥 أعضاء الفريق (بعد التعديل)
+// 👥 أعضاء الفريق
 // ==========================================
 const teamMembers = [
   { name: "ياسر الأشرم", role: "Founder & CEO", initial: "ي", color: "#8B5CF6" },
   { name: "علي اليماني", role: "Team Manager", initial: "ع", color: "#3B82F6" },
   { name: "ماجد الشرعبي", role: "CTO", initial: "م", color: "#10B981" },
   { name: "أحمد الفسيل", role: "Senior AI Architect", initial: "أ", color: "#EC4899" },
-  { name: "هيام الكميم", role: "Lead UI/UX Designer", initial: "ه", color: "#F59E0B" },
+  { name: "هيام الكميم", role: "Lead UI/UX Designer", initial: "هـ", color: "#F59E0B" },
   { name: "محمد العزاني", role: "Cyber Security Analyst", initial: "م", color: "#EF4444" },
   { name: "إسماعيل الشامي", role: "Cloud Operations Manager", initial: "إ", color: "#06B6D4" },
 ];
@@ -423,7 +423,7 @@ const faqs = [
 // ==========================================
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0a0f] text-slate-900 dark:text-white overflow-x-hidden transition-colors duration-300">
       <HeroSection />
       <ServicesMarquee />
       <Services />
@@ -458,31 +458,30 @@ function HeroSection() {
   const activeSlide = heroSlides[currentSlide];
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* 🌌 خلفية أساسية */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-[#12121a] to-[#0a0a0f]" />
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:bg-[#0a0a0f] transition-colors duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:bg-gradient-to-b dark:from-[#0a0a0f] dark:via-[#12121a] dark:to-[#0a0a0f]" />
 
-      {/* ⭐ الشعار كخلفية ضخمة (باهتة) */}
+      {/* ⭐ الشعار كخلفية ضخمة (باهتة) - يعمل في الوضعين */}
       <motion.div
         initial={{ opacity: 0, scale: 1.1 }}
-        animate={{ opacity: 0.08, scale: 1 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 2 }}
         className="absolute inset-0 flex items-center justify-center pointer-events-none"
       >
         <img
           src="/logo.png"
           alt=""
-          className="w-[700px] md:w-[1000px] lg:w-[1200px] h-auto object-contain blur-[2px]"
+          className="w-[700px] md:w-[1000px] lg:w-[1200px] h-auto object-contain blur-[2px] opacity-[0.15] dark:opacity-[0.08]"
         />
       </motion.div>
 
       {/* هالات ملونة */}
       <motion.div
-        className="absolute top-0 left-1/4 w-[700px] h-[700px] bg-purple-600/20 rounded-full blur-[180px] pointer-events-none"
+        className="absolute top-0 left-1/4 w-[700px] h-[700px] bg-purple-600/20 dark:bg-purple-600/20 rounded-full blur-[180px] pointer-events-none"
         animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.25, 0.15] }}
         transition={{ duration: 8, repeat: Infinity }}
       />
-      <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-blue-600/15 dark:bg-blue-600/15 rounded-full blur-[150px] pointer-events-none" />
 
       {/* شبكة */}
       <div
@@ -551,9 +550,11 @@ function HeroSection() {
                 key={`label-${currentSlide}`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-xl border border-white/20 rounded-full px-5 py-2 shadow-2xl"
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 backdrop-blur-xl rounded-full px-6 py-2.5 shadow-2xl border transition-colors
+                  bg-white/95 border-purple-200 text-purple-900
+                  dark:bg-slate-900/90 dark:border-white/20 dark:text-white"
               >
-                <span className="text-sm font-bold text-white">{activeSlide.label}</span>
+                <span className="text-sm font-bold">{activeSlide.label}</span>
               </motion.div>
             </div>
           </motion.div>
@@ -587,7 +588,7 @@ function HeroSection() {
               نبني أنظمة رقمية
               <br />
               <motion.span
-                className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400"
+                className="inline-block mt-3 md:mt-4 lg:mt-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400"
                 animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
                 style={{ backgroundSize: "200% auto" }}
@@ -699,26 +700,27 @@ function HeroSection() {
                   />
                   {/* الحلقة */}
                   <div
-                    className="relative w-20 h-20 md:w-24 md:h-24 rounded-full p-[3px] transition-all duration-500"
+                    className="team-avatar-ring relative w-20 h-20 md:w-24 md:h-24 rounded-full p-[3px] transition-all duration-500"
                     style={{
                       background: `linear-gradient(135deg, ${member.color}, ${member.color}66)`,
                     }}
                   >
-                    <div className="w-full h-full rounded-full bg-[#0a0a0f] flex items-center justify-center text-2xl md:text-3xl font-black text-white group-hover:bg-[#12121a] transition-colors">
+                    {/* ✅ تم التعديل ليدعم الوضعين */}
+                    <div className="team-avatar-inner w-full h-full rounded-full bg-white dark:bg-[#0a0a0f] flex items-center justify-center text-2xl md:text-3xl font-black text-slate-900 dark:text-white group-hover:bg-slate-50 dark:group-hover:bg-[#12121a] transition-colors">
                       {member.initial}
                     </div>
                   </div>
                   {/* نقطة الحالة */}
                   <div
-                    className="absolute bottom-1 right-1 w-4 h-4 rounded-full border-2 border-[#0a0a0f] group-hover:scale-125 transition-transform"
+                    className="team-avatar-dot absolute bottom-1 right-1 w-4 h-4 rounded-full border-2 border-white dark:border-[#0a0a0f] group-hover:scale-125 transition-transform"
                     style={{ background: member.color }}
                   />
                 </div>
                 <div className="text-center">
-                  <div className="text-sm md:text-base font-bold text-white whitespace-nowrap group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-blue-400 transition-all">
+                  <div className="team-member-name text-sm md:text-base font-bold text-slate-900 dark:text-white whitespace-nowrap group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-blue-400 transition-all">
                     {member.name}
                   </div>
-                  <div className="text-[10px] md:text-xs text-slate-500 whitespace-nowrap mt-1">
+                  <div className="team-member-role text-[10px] md:text-xs text-slate-500 whitespace-nowrap mt-1">
                     {member.role}
                   </div>
                 </div>
@@ -750,41 +752,32 @@ function HeroSection() {
 // 🎯 Marquee
 // ==========================================
 function ServicesMarquee() {
-  // 🎨 ألوان متناوبة للأيقونات
   const iconColors = [
-    "#8B5CF6", // Purple
-    "#3B82F6", // Blue
-    "#06B6D4", // Cyan
-    "#10B981", // Green
-    "#F59E0B", // Amber
-    "#EC4899", // Pink
-    "#EF4444", // Red
-    "#14B8A6", // Teal
+    "#8B5CF6", "#3B82F6", "#06B6D4", "#10B981",
+    "#F59E0B", "#EC4899", "#EF4444", "#14B8A6",
   ];
 
   return (
-    <section className="py-6 border-y border-white/5 bg-gradient-to-r from-[#0a0a0f] via-[#12121a] to-[#0a0a0f] overflow-hidden relative">
-      {/* خط علوي متوهج */}
+    <section className="py-6 border-y overflow-hidden relative transition-colors
+      bg-gradient-to-l from-purple-50 via-white to-blue-50 border-purple-200
+      dark:from-[#0a0a0f] dark:via-[#12121a] dark:to-[#0a0a0f] dark:border-white/5">
+      
+      {/* خط علوي */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
 
       <div className="flex gap-10 animate-marquee whitespace-nowrap py-2">
-        {[...servicesMarquee, ...servicesMarquee].map((service, i) => {
+        {[...servicesMarquee, ...servicesMarquee, ...servicesMarquee].map((service, i) => {
           const Icon = service.icon;
           const color = iconColors[i % iconColors.length];
 
           return (
             <div key={i} className="flex items-center gap-4 group cursor-pointer">
-              {/* ── 1. الشرطة (أول عنصر) ── */}
-              <span
-                className="w-6 h-0.5 rounded-full flex-shrink-0 transition-all duration-300 group-hover:w-10"
-                style={{ background: color }}
-              />
 
-              {/* ── 2. الأيقونة ── */}
+              {/* الأيقونة */}
               <motion.div
                 whileHover={{ scale: 1.15, rotate: 5 }}
                 transition={{ type: "spring", stiffness: 400 }}
-                className="relative w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                className="relative w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{
                   background: `linear-gradient(135deg, ${color}30, ${color}10)`,
                   border: `1px solid ${color}40`,
@@ -794,27 +787,21 @@ function ServicesMarquee() {
                 <Icon className="w-5 h-5" style={{ color }} />
               </motion.div>
 
-              {/* ── 3. الاسم ── */}
+              {/* الاسم */}
               <span
-                className="text-lg md:text-xl font-bold text-slate-300 transition-colors flex-shrink-0"
-                style={{ color: "inherit" }}
+                className="text-lg md:text-xl font-bold flex-shrink-0 transition-colors
+                  text-slate-700 dark:text-slate-300"
                 onMouseEnter={(e) => (e.currentTarget.style.color = color)}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "")}
               >
                 {service.label}
               </span>
-
-              {/* ── 4. فاصل صغير بين العناصر ── */}
-              <span
-                className="w-1.5 h-1.5 rounded-full flex-shrink-0 opacity-50"
-                style={{ background: color }}
-              />
             </div>
           );
         })}
       </div>
 
-      {/* خط سفلي متوهج */}
+      {/* خط سفلي */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
     </section>
   );
@@ -829,7 +816,7 @@ function ERPSection() {
   const maxValue = Math.max(...active.chartData);
 
   return (
-    <section className="py-24 md:py-32 bg-[#0a0a0f] relative overflow-hidden">
+    <section className="erp-section py-24 md:py-32 bg-white dark:bg-[#0a0a0f] relative overflow-hidden transition-colors duration-300">
       <AnimatePresence mode="wait">
         <motion.div
           key={active.id}
@@ -858,28 +845,38 @@ function ERPSection() {
         </motion.div>
 
         <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {erpSystems.map((sys, i) => (
-            <motion.button
-              key={sys.id}
-              onClick={() => setActiveTab(i)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`px-6 py-3 rounded-full font-semibold transition-all ${
-                i === activeTab
-                  ? "bg-white text-black shadow-lg"
-                  : "bg-white/5 text-slate-400 hover:bg-white/10 border border-white/10"
-              }`}
-            >
-              {sys.label}
-            </motion.button>
-          ))}
+        {erpSystems.map((sys, i) => (
+          <motion.button
+            key={sys.id}
+            onClick={() => setActiveTab(i)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={`px-6 py-3 rounded-full font-semibold transition-all border-2 ${
+              i === activeTab
+                ? "text-white shadow-lg shadow-purple-500/30 border-transparent"
+                : "bg-white/5 text-slate-400 hover:bg-white/10 border-white/10 dark:bg-white/5 dark:text-slate-400"
+            }`}
+            style={
+              i === activeTab
+                ? {
+                    background: `linear-gradient(135deg, ${sys.color}, ${sys.color}CC)`,
+                    borderColor: sys.color,
+                  }
+                : undefined
+            }
+          >
+            {sys.label}
+          </motion.button>
+        ))}
         </div>
 
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-6xl mx-auto bg-gradient-to-br from-[#12121a] to-[#0a0a0f] border border-white/10 rounded-3xl overflow-hidden"
+          className="max-w-6xl mx-auto rounded-3xl overflow-hidden transition-colors
+            bg-white border-2 border-purple-100 shadow-xl shadow-purple-500/5
+            dark:bg-gradient-to-br dark:from-[#12121a] dark:to-[#0a0a0f] dark:border-white/10 dark:shadow-none"
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -936,8 +933,9 @@ function ERPSection() {
 
               {/* Dashboard */}
               <div className="order-1 lg:order-2">
-                <div className="rounded-2xl bg-[#0d0d14] border border-white/10 overflow-hidden shadow-2xl">
-                  <div className="flex items-center gap-2 px-4 py-3 bg-[#12121a] border-b border-white/5">
+                {/* ✅ تم إزالة keep-dark-bg واستبدالها بـ erp-dashboard-bg */}
+                <div className="erp-dashboard-bg rounded-2xl bg-[#0d0d14] dark:bg-[#0d0d14] border border-white/10 overflow-hidden shadow-2xl transition-colors duration-300">
+                  <div className="erp-dashboard-header flex items-center gap-2 px-4 py-3 bg-[#12121a] dark:bg-[#12121a] border-b border-white/5 transition-colors duration-300">
                     <div className="flex gap-1.5">
                       <div className="w-3 h-3 rounded-full bg-red-500/60" />
                       <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
@@ -991,44 +989,300 @@ function ERPSection() {
                         <div className="text-[10px] md:text-xs text-slate-400 font-semibold">
                           {active.chartTitle}
                         </div>
-                        <div className="text-[10px] text-slate-600">آخر 7 أيام</div>
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 border border-green-500/30">
+                            <div className="relative w-1.5 h-1.5 rounded-full bg-green-500">
+                              <div className="absolute inset-0 rounded-full bg-green-500 animate-ping" />
+                            </div>
+                            <span className="text-[8px] text-green-400 font-bold">مباشر</span>
+                          </div>
+                          <div className="text-[10px] text-slate-600">آخر 7 أيام</div>
+                        </div>
                       </div>
-                      <div className="flex items-end justify-between gap-2 md:gap-3 h-24 md:h-32">
-                        {active.chartData.map((h, i) => {
-                          const heightPercent = (h / maxValue) * 100;
-                          return (
-                            <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
-                              <div className="text-[9px] md:text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity"
-                                style={{ color: active.color }}
+                      
+                      {/* ✅ البيانات المتزايدة */}
+                      {(() => {
+                        const trendingData = active.chartData.map((_, i) => {
+                          const baseValue = 20 + i * 12;
+                          const variation = i === 4 ? -8 : i === 5 ? 8 : 0;
+                          return Math.min(100, baseValue + variation);
+                        });
+                        const maxTrendValue = 100;
+                        const chartHeightPx = 128;
+                        
+                        // ✅ عكس البيانات للأعمدة فقط (لأن RTL يقلب الترتيب البصري)
+                        const reversedData = [...trendingData].reverse();
+                        const reversedLabels = [...active.chartLabels].reverse();
+                        
+                        // ✅ إحداثيات النقاط للخط (نفس ترتيب البيانات الأصلي)
+                        const points = reversedData.map((value, i) => {
+                          // ✅ عكس إحداثيات x بحيث يبدأ الخط من اليمين (حيث العمود الأول)
+                          const x = 100 - ((i + 0.5) / reversedData.length) * 100;
+                          const yPercent = 100 - (value / maxTrendValue) * 100;
+                          return { x, yPercent, value };
+                        });
+                        
+                        return (
+                          <div className="relative">
+                            <div className="flex items-end justify-between gap-2 md:gap-3 h-32 relative">
+                              
+                              {/* ✅ الأعمدة */}
+                              {reversedData.map((value, i) => {
+                                const heightPx = (value / maxTrendValue) * chartHeightPx;
+                                
+                                return (
+                                  <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group relative z-10">
+                                    
+                                    {/* القيمة أعلى العمود */}
+                                    <motion.div 
+                                      className="text-[9px] md:text-[10px] font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                      style={{ color: active.color }}
+                                      animate={{ 
+                                        y: [0, -2, 0],
+                                        opacity: [0.7, 1, 0.7]
+                                      }}
+                                      transition={{ 
+                                        duration: 2, 
+                                        repeat: Infinity, 
+                                        delay: i * 0.3,
+                                      }}
+                                    >
+                                      {value.toFixed(0)}
+                                    </motion.div>
+                                    
+                                    {/* العمود */}
+                                    <div className="w-full relative" style={{ height: `${heightPx}px` }}>
+                                      
+                                      <motion.div
+                                        className="absolute -inset-0.5 rounded-t-md blur-md"
+                                        style={{ background: active.color }}
+                                        animate={{ opacity: [0.1, 0.25, 0.1] }}  // ✅ شفافية أقل
+                                        transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.2 }}
+                                      />
+                                      
+                                      <motion.div
+                                        initial={{ scaleY: 0 }}
+                                        whileInView={{ scaleY: 1 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: i * 0.1, duration: 0.8, ease: "easeOut" }}
+                                        className="absolute inset-0 rounded-t-md overflow-hidden origin-bottom
+                                          border border-white/10 dark:border-white/5"
+                                        style={{
+                                          // ✅ شفافية 25% فقط (يظهر الخط من خلاله)
+                                          background: `linear-gradient(180deg, ${active.color}40, ${active.color}15)`,
+                                        }}
+                                      >
+                                        {/* شريط متحرك داخل العمود - شفاف */}
+                                        <motion.div
+                                          className="absolute inset-0 bg-gradient-to-t from-transparent via-white/10 to-transparent"
+                                          animate={{ y: ["100%", "-100%"] }}
+                                          transition={{ 
+                                            duration: 2.5, 
+                                            repeat: Infinity, 
+                                            ease: "linear", 
+                                            delay: i * 0.3 
+                                          }}
+                                        />
+                                        
+                                        {/* وميض علوي - أخف */}
+                                        <motion.div
+                                          className="absolute top-0 left-0 right-0 h-1"
+                                          style={{ background: `${active.color}80` }}
+                                          animate={{ opacity: [0.3, 0.8, 0.3] }}
+                                          transition={{ 
+                                            duration: 1.5, 
+                                            repeat: Infinity, 
+                                            delay: i * 0.15,
+                                          }}
+                                        />
+                                        
+                                        {/* ✅ إطار علوي بلون الخدمة للتمييز */}
+                                        <div 
+                                          className="absolute top-0 left-0 right-0 h-[2px]"
+                                          style={{ background: active.color }}
+                                        />
+                                      </motion.div>
+                                    </div>
+                                    
+                                    {/* اسم اليوم */}
+                                    <motion.div 
+                                      className="text-[9px] md:text-[10px] font-semibold mt-1.5"
+                                      animate={{ color: ['#64748b', active.color, '#64748b'] }}
+                                      transition={{ duration: 4, repeat: Infinity, delay: i * 0.2 }}
+                                    >
+                                      {reversedLabels[i]}
+                                    </motion.div>
+                                  </div>
+                                );
+                              })}
+                              
+                              {/* ✅ الخط المتحرك */}
+                              <svg 
+                                className="absolute inset-0 w-full h-full pointer-events-none z-20"
+                                viewBox="0 0 100 100"
+                                preserveAspectRatio="none"
+                                style={{ paddingBottom: '24px' }}
                               >
-                                {h}
-                              </div>
-                              <div className="w-full h-full flex items-end">
-                                <motion.div
-                                  initial={{ height: 0 }}
-                                  whileInView={{ height: `${heightPercent}%` }}
-                                  viewport={{ once: true }}
-                                  transition={{ delay: i * 0.1, duration: 0.8, ease: "easeOut" }}
-                                  className="w-full rounded-t-md relative overflow-hidden group-hover:opacity-100 transition-opacity"
-                                  style={{
-                                    background: `linear-gradient(180deg, ${active.color}, ${active.color}66)`,
-                                    minHeight: "8px",
+                                <defs>
+                                  <linearGradient id={`lineGradient-${active.id}`} x1="100%" y1="0%" x2="0%" y2="0%">
+                                    <stop offset="0%" stopColor="#FBBF24" />
+                                    <stop offset="50%" stopColor={active.color} />
+                                    <stop offset="100%" stopColor="#EF4444" />
+                                  </linearGradient>
+                                  <filter id={`glow-${active.id}`}>
+                                    <feGaussianBlur stdDeviation="0.8" result="coloredBlur"/>
+                                    <feMerge>
+                                      <feMergeNode in="coloredBlur"/>
+                                      <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                  </filter>
+                                </defs>
+                                
+                                {/* ✅ نسخة خافتة من الخط (تبقى دائمًا) */}
+                                <polyline
+                                  points={points.map(p => `${p.x},${p.yPercent}`).join(' ')}
+                                  fill="none"
+                                  stroke={`url(#lineGradient-${active.id})`}
+                                  strokeWidth="0.8"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  opacity="0.15"
+                                />
+                                
+                                {/* ✅ الخط المتحرك فوق النسخة الخافتة */}
+                                <motion.polyline
+                                  points={points.map(p => `${p.x},${p.yPercent}`).join(' ')}
+                                  fill="none"
+                                  stroke={`url(#lineGradient-${active.id})`}
+                                  strokeWidth="1"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  filter={`url(#glow-${active.id})`}
+                                  initial={{ pathLength: 0, opacity: 0 }}
+                                  animate={{ 
+                                    pathLength: [0, 1, 1],   // يرسم كاملاً ثم يبقى
+                                    opacity: [0, 1, 1],
+                                  }}
+                                  transition={{ 
+                                    duration: 3.5,
+                                    times: [0, 0.85, 1],
+                                    repeat: Infinity,
+                                    repeatType: "loop",
+                                    ease: "easeInOut",
+                                    repeatDelay: 0.5,
+                                  }}
+                                />
+                                
+                                {/* ✅ النقاط */}
+                                {points.map((point, i) => (
+                                  <g key={i}>
+                                    <motion.circle
+                                      cx={point.x}
+                                      cy={point.yPercent}
+                                      r="2.5"
+                                      fill={active.color}
+                                      initial={{ scale: 0, opacity: 0 }}
+                                      animate={{ 
+                                        scale: [0, 1.3, 1], 
+                                        opacity: [0, 0.5, 0.3],
+                                      }}
+                                      transition={{ 
+                                        duration: 0.4, 
+                                        delay: i * 0.4,
+                                        repeat: Infinity,
+                                        repeatDelay: 3.5,
+                                        repeatType: "loop",
+                                      }}
+                                      style={{ transformOrigin: `${point.x}px ${point.yPercent}px` }}
+                                    />
+                                    <motion.circle
+                                      cx={point.x}
+                                      cy={point.yPercent}
+                                      r="1.2"
+                                      fill="#fff"
+                                      stroke={active.color}
+                                      strokeWidth="0.4"
+                                      initial={{ scale: 0, opacity: 0 }}
+                                      animate={{ 
+                                        scale: [0, 1.3, 1], 
+                                        opacity: [0, 1, 1],
+                                      }}
+                                      transition={{ 
+                                        duration: 0.4, 
+                                        delay: i * 0.4,
+                                        repeat: Infinity,
+                                        repeatDelay: 3.5,
+                                        repeatType: "loop",
+                                      }}
+                                      style={{ transformOrigin: `${point.x}px ${point.yPercent}px` }}
+                                    />
+                                  </g>
+                                ))}
+                                
+                                {/* ✅ السهم */}
+                                <motion.g
+                                  initial={{ opacity: 0, scale: 0.5 }}
+                                  animate={{ 
+                                    opacity: [0, 0, 1, 1],
+                                    scale: [0.5, 0.5, 1.2, 1],
+                                  }}
+                                  transition={{ 
+                                    duration: 4,
+                                    times: [0, 0.8, 0.9, 1],
+                                    repeat: Infinity,
+                                    repeatType: "loop",
+                                    repeatDelay: 0.5,
+                                  }}
+                                  style={{ 
+                                    transformOrigin: `${points[points.length - 1].x}px ${points[points.length - 1].yPercent}px` 
                                   }}
                                 >
-                                  <motion.div
-                                    className="absolute inset-0 bg-white/20"
-                                    initial={{ y: "-100%" }}
-                                    animate={{ y: "100%" }}
-                                    transition={{ duration: 2, repeat: Infinity, ease: "linear", delay: i * 0.2 }}
+                                  <polygon 
+                                    points={`
+                                      ${points[points.length - 1].x - 2},${points[points.length - 1].yPercent - 2.5}
+                                      ${points[points.length - 1].x + 0.5},${points[points.length - 1].yPercent - 4}
+                                      ${points[points.length - 1].x - 1},${points[points.length - 1].yPercent - 1}
+                                    `}
+                                    fill="#EF4444"
                                   />
-                                </motion.div>
-                              </div>
-                              <div className="text-[9px] md:text-[10px] text-slate-500 font-semibold">
-                                {active.chartLabels[i]}
-                              </div>
+                                  <polygon 
+                                    points={`
+                                      ${points[points.length - 1].x - 3},${points[points.length - 1].yPercent - 1}
+                                      ${points[points.length - 1].x - 1},${points[points.length - 1].yPercent - 3}
+                                      ${points[points.length - 1].x - 1.5},${points[points.length - 1].yPercent + 0.5}
+                                    `}
+                                    fill="#EF4444"
+                                  />
+                                </motion.g>
+                              </svg>
                             </div>
-                          );
-                        })}
+                          </div>
+                        );
+                      })()}
+                      
+                      {/* ✅ شريط الحالة السفلي */}
+                      <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <motion.div
+                            className="w-1.5 h-1.5 rounded-full"
+                            style={{ background: active.color }}
+                            animate={{ 
+                              opacity: [0.3, 1, 0.3],
+                              scale: [1, 1.3, 1]
+                            }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          />
+                          <span className="text-[8px] text-slate-500">آخر تحديث: قبل دقيقة</span>
+                        </div>
+                        <motion.div 
+                          className="text-[8px] font-bold flex items-center gap-1"
+                          style={{ color: active.color }}
+                          animate={{ opacity: [0.5, 1, 0.5] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          <span>📈</span>
+                          <span>اتجاه صاعد</span>
+                        </motion.div>
                       </div>
                     </div>
 
@@ -1081,12 +1335,13 @@ function ERPSection() {
   );
 }
 
+
 // ==========================================
 // 🔄 Process
 // ==========================================
 function ProcessSection() {
   return (
-    <section className="py-24 md:py-32 bg-[#0d0d14] relative overflow-hidden">
+    <section className="process-section py-24 md:py-32 bg-slate-50 dark:bg-[#0d0d14] relative overflow-hidden transition-colors duration-300">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-blue-600/10 rounded-full blur-[180px] pointer-events-none" />
       <div className="container mx-auto px-6 relative z-10">
         <motion.div
@@ -1123,7 +1378,7 @@ function ProcessSection() {
                       <Icon className="w-14 h-14 text-white" />
                     </div>
                     <div
-                      className="absolute -top-2 -right-2 w-12 h-12 rounded-full bg-[#0a0a0f] border-2 flex items-center justify-center text-lg font-black"
+                      className="process-number absolute -top-2 -right-2 w-12 h-12 rounded-full bg-white dark:bg-[#0a0a0f] border-2 flex items-center justify-center text-lg font-black"
                       style={{ borderColor: step.color, color: step.color }}
                     >
                       {step.number}
@@ -1148,7 +1403,7 @@ function ProcessSection() {
 // ==========================================
 function WebsitesSection() {
   return (
-    <section className="py-24 md:py-32 bg-[#0a0a0f] relative">
+    <section className="websites-section py-24 md:py-32 bg-white dark:bg-[#0a0a0f] relative transition-colors duration-300">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -1170,9 +1425,9 @@ function WebsitesSection() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
               whileHover={{ y: -6 }}
-              className="group relative bg-[#12121a] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all"
+              className="website-card group relative bg-white dark:bg-[#12121a] border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden hover:border-slate-300 dark:hover:border-white/20 transition-all shadow-sm dark:shadow-none"
             >
-              <div className="relative aspect-[16/10] overflow-hidden bg-[#0a0a0f] flex items-center justify-center p-6">
+              <div className="relative aspect-[16/10] overflow-hidden bg-slate-100 dark:bg-[#0a0a0f] flex items-center justify-center p-6">
                 <div
                   className="w-24 h-24 rounded-2xl flex items-center justify-center text-5xl transition-transform group-hover:scale-110"
                   style={{
@@ -1185,7 +1440,7 @@ function WebsitesSection() {
               </div>
               <div className="p-5">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-base md:text-lg font-black">{site.name}</h3>
+                  <h3 className="text-base md:text-lg font-black text-slate-900 dark:text-white">{site.name}</h3>
                   <span
                     className="text-[10px] px-2 py-0.5 rounded-full font-mono"
                     style={{ background: `${site.color}20`, color: site.color }}
@@ -1193,7 +1448,7 @@ function WebsitesSection() {
                     {site.tag}
                   </span>
                 </div>
-                <p className="text-xs md:text-sm text-slate-400 line-clamp-2">{site.desc}</p>
+                <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 line-clamp-2">{site.desc}</p>
               </div>
             </motion.div>
           ))}
@@ -1208,7 +1463,7 @@ function WebsitesSection() {
 // ==========================================
 function AppsSection() {
   return (
-    <section className="py-24 md:py-32 bg-[#0d0d14] relative overflow-hidden">
+    <section className="apps-section py-24 md:py-32 bg-slate-50 dark:bg-[#0d0d14] relative overflow-hidden transition-colors duration-300">
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-cyan-600/10 rounded-full blur-[180px] pointer-events-none" />
       <div className="container mx-auto px-6 relative z-10">
         <motion.div
@@ -1231,7 +1486,7 @@ function AppsSection() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
               whileHover={{ y: -6 }}
-              className="group bg-[#12121a] border border-white/10 rounded-2xl p-5 hover:border-white/20 transition-all"
+              className="app-card group bg-white dark:bg-[#12121a] border border-slate-200 dark:border-white/10 rounded-2xl p-5 hover:border-slate-300 dark:hover:border-white/20 transition-all shadow-sm dark:shadow-none"
             >
               <div
                 className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
@@ -1242,8 +1497,8 @@ function AppsSection() {
               >
                 <span className="text-2xl font-black text-white">{app.name[0]}</span>
               </div>
-              <h3 className="text-base font-black mb-1 truncate">{app.name}</h3>
-              <p className="text-xs text-slate-400 line-clamp-2 mb-4 h-8">{app.desc}</p>
+              <h3 className="text-base font-black mb-1 truncate text-slate-900 dark:text-white">{app.name}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-4 h-8">{app.desc}</p>
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1 text-yellow-400">
                   <Star className="w-3.5 h-3.5 fill-current" />
@@ -1273,7 +1528,7 @@ function PricingSection() {
   const [hoveredPlan, setHoveredPlan] = useState<number | null>(null);
 
   return (
-    <section className="py-24 md:py-32 bg-[#0a0a0f] relative overflow-hidden">
+    <section className="pricing-section py-24 md:py-32 bg-slate-50 dark:bg-[#0a0a0f] relative overflow-hidden transition-colors duration-300">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-purple-600/10 rounded-full blur-[200px] pointer-events-none" />
       <div className="container mx-auto px-6 relative z-10">
         <motion.div
@@ -1305,9 +1560,9 @@ function PricingSection() {
                 onMouseLeave={() => setHoveredPlan(null)}
                 className={`relative rounded-3xl p-8 transition-all duration-500 ${
                   isPopular
-                    ? "bg-gradient-to-br from-purple-500/20 via-[#12121a] to-[#0a0a0f] border-2 border-purple-500/50 scale-105 lg:scale-110 shadow-2xl shadow-purple-500/30"
-                    : "bg-[#12121a] border border-white/10"
-                } ${isHovered && !isPopular ? "scale-105 shadow-2xl" : ""}`}
+                    ? "bg-gradient-to-br from-purple-100 via-purple-50 to-white border-2 border-purple-300 scale-105 lg:scale-110 shadow-2xl shadow-purple-500/20 dark:from-purple-500/20 dark:via-[#12121a] dark:to-[#0a0a0f] dark:border-purple-500/50"
+                    : "bg-white border border-slate-200 shadow-sm dark:bg-[#12121a] dark:border-white/10"
+                } ${isHovered && !isPopular ? "scale-105 shadow-2xl shadow-purple-500/10" : ""}`}
               >
                 {isPopular && (
                   <div className="absolute -top-4 right-1/2 translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-5 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
@@ -1318,25 +1573,25 @@ function PricingSection() {
                 <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${plan.gradient} flex items-center justify-center mb-6 shadow-lg`}>
                   <Icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-black mb-1">{plan.name}</h3>
-                <p className="text-sm text-slate-400 mb-8">{plan.subtitle}</p>
+                <h3 className="text-2xl font-black mb-1 text-slate-900 dark:text-white">{plan.name}</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-8">{plan.subtitle}</p>
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feature, j) => (
                     <li
                       key={j}
                       className={`flex items-center gap-3 text-sm ${
-                        feature.included ? "text-slate-300" : "text-slate-600 line-through"
+                        feature.included ? "text-slate-700 dark:text-slate-300" : "text-slate-400 dark:text-slate-600 line-through"
                       }`}
                     >
                       <div
                         className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
-                          feature.included ? "bg-green-500/20" : "bg-white/5"
+                          feature.included ? "bg-green-500/20" : "bg-slate-100 dark:bg-white/5"
                         }`}
                       >
                         {feature.included ? (
-                          <Check className="w-3 h-3 text-green-400" />
+                          <Check className="w-3 h-3 text-green-600 dark:text-green-400" />
                         ) : (
-                          <X className="w-3 h-3 text-slate-600" />
+                          <X className="w-3 h-3 text-slate-400 dark:text-slate-600" />
                         )}
                       </div>
                       <span>{feature.text}</span>
@@ -1350,7 +1605,7 @@ function PricingSection() {
                   className={`block w-full text-center py-4 rounded-xl font-bold transition-all ${
                     isPopular
                       ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-2xl hover:shadow-purple-500/50"
-                      : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+                      : "bg-slate-900 text-white hover:bg-slate-800 dark:bg-white/5 dark:border dark:border-white/10 dark:hover:bg-white/10"
                   }`}
                 >
                   اطلب هذه الباقة
@@ -1366,9 +1621,9 @@ function PricingSection() {
           viewport={{ once: true }}
           className="text-center mt-12 text-sm text-slate-500 flex flex-wrap items-center justify-center gap-4"
         >
-          <div className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /><span>تسديد بالأقساط</span></div>
-          <div className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /><span>تدريب مجاني</span></div>
-          <div className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /><span>دعم فني لفترة محددة</span></div>
+          <div className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /><span>تسديد بالأقساط</span></div>
+          <div className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /><span>تدريب مجاني</span></div>
+          <div className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /><span>دعم فني لفترة محددة</span></div>
         </motion.div>
       </div>
     </section>
@@ -1379,10 +1634,11 @@ function PricingSection() {
 // ❓ FAQ
 // ==========================================
 function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  // ✅ تم التغيير: من 0 إلى null لإغلاق جميع الأسئلة افتراضيًا
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-24 md:py-32 bg-[#0d0d14] relative overflow-hidden">
+    <section className="faq-section py-24 md:py-32 bg-white dark:bg-[#0d0d14] relative overflow-hidden transition-colors duration-300">
       <div className="absolute top-1/2 right-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[180px] pointer-events-none" />
       <div className="container mx-auto px-6 relative z-10">
         <motion.div
@@ -1393,7 +1649,30 @@ function FAQSection() {
         >
           <span className="text-sm text-blue-400 uppercase tracking-widest font-mono">FAQ</span>
           <h2 className="text-4xl md:text-6xl font-black mt-4 mb-6">الأسئلة الشائعة</h2>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto">إجابات على أكثر الأسئلة التي تصلنا</p>
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+            إجابات على أكثر الأسئلة التي تصلنا
+          </p>
+
+          {/* ✅ رسالة إرشادية للزائر */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="inline-flex items-center gap-2 mt-6 px-5 py-3 rounded-full
+              bg-purple-50 dark:bg-purple-500/10
+              border border-purple-200 dark:border-purple-500/30
+              text-purple-700 dark:text-purple-300
+              transition-colors duration-300"
+          >
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
+            </span>
+            <span className="text-sm md:text-base font-bold">
+              👆 اضغط على أي سؤال للاطلاع على الإجابة
+            </span>
+          </motion.div>
         </motion.div>
 
         <div className="max-w-3xl mx-auto space-y-4">
@@ -1406,24 +1685,31 @@ function FAQSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                className={`bg-[#12121a] border rounded-2xl overflow-hidden transition-all ${
-                  isOpen ? "border-purple-500/40" : "border-white/10"
+                className={`faq-item bg-white border-2 rounded-2xl overflow-hidden transition-all shadow-sm
+                  dark:bg-[#12121a] dark:shadow-none ${
+                  isOpen 
+                    ? "border-purple-400 dark:border-purple-500/40" 
+                    : "border-slate-200 dark:border-white/10"
                 }`}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="w-full flex items-center justify-between gap-4 p-6 text-right hover:bg-white/5 transition-colors"
+                  className="w-full flex items-center justify-between gap-4 p-6 text-right hover:bg-purple-50 dark:hover:bg-white/5 transition-colors"
                 >
-                  <span className={`text-base md:text-lg font-bold transition-colors ${isOpen ? "text-purple-400" : "text-white"}`}>
+                  <span className={`text-base md:text-lg font-bold transition-colors ${
+                    isOpen 
+                      ? "text-purple-600 dark:text-purple-400" 
+                      : "text-slate-900 dark:text-white"
+                  }`}>
                     {faq.question}
                   </span>
                   <motion.div
                     animate={{ rotate: isOpen ? 180 : 0 }}
                     className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      isOpen ? "bg-purple-500/20" : "bg-white/5"
+                      isOpen ? "bg-purple-500/20" : "bg-slate-100 dark:bg-white/5"
                     }`}
                   >
-                    <ChevronDown className={`w-4 h-4 ${isOpen ? "text-purple-400" : "text-slate-400"}`} />
+                    <ChevronDown className={`w-4 h-4 ${isOpen ? "text-purple-500 dark:text-purple-400" : "text-slate-400"}`} />
                   </motion.div>
                 </button>
                 <AnimatePresence>
@@ -1434,11 +1720,12 @@ function FAQSection() {
                       exit={{ height: 0, opacity: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 pb-6 border-t border-white/5 pt-4">
+                      <div className="px-6 pb-6 border-t border-slate-200 dark:border-white/5 pt-4">
                         <ul className="space-y-2.5">
                           {faq.answer.map((point, j) => (
-                            <li key={j} className="flex items-start gap-3 text-slate-400 text-sm md:text-base">
-                              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 flex-shrink-0" />
+                            <li key={j} className="flex items-start gap-3 text-sm md:text-base
+                              text-slate-700 dark:text-slate-400">
+                              <span className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-2 flex-shrink-0" />
                               <span>{point}</span>
                             </li>
                           ))}

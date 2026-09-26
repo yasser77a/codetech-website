@@ -30,7 +30,7 @@ export default function PortfolioTabs() {
   const filtered = active === "all" ? projects : projects.filter((p) => p.category === active);
 
   return (
-    <section className="py-32 bg-white">
+    <section className="portfolio-tabs-section py-32 bg-white dark:bg-[#0a0a0f] transition-colors duration-300">
       <div className="container mx-auto px-4">
         
         {/* العنوان */}
@@ -40,16 +40,16 @@ export default function PortfolioTabs() {
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="inline-flex items-center gap-2 bg-purple-50 text-purple-600 px-4 py-2 rounded-full font-bold text-sm mb-4 border border-purple-100">
+          <span className="inline-flex items-center gap-2 bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 px-4 py-2 rounded-full font-bold text-sm mb-4 border border-purple-100 dark:border-purple-500/20">
             ✨ معرض أعمالنا
           </span>
-          <h2 className="text-4xl lg:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+          <h2 className="text-4xl lg:text-6xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">
             مشاريع
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
               {" "}من إنجازنا
             </span>
           </h2>
-          <p className="text-xl text-slate-600">
+          <p className="text-xl text-slate-600 dark:text-slate-400">
             اكتشف مجموعة متنوعة من مشاريعنا في مختلف المجالات
           </p>
         </motion.div>
@@ -62,8 +62,8 @@ export default function PortfolioTabs() {
               onClick={() => setActive(cat.id)}
               className={`px-6 py-3 rounded-2xl font-bold transition-all flex items-center gap-2 ${
                 active === cat.id
-                  ? "bg-slate-900 text-white shadow-lg scale-105"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  ? "portfolio-tab-active bg-slate-900 dark:bg-purple-600 text-white shadow-lg scale-105"
+                  : "portfolio-tab-inactive bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10"
               }`}
             >
               <span>{cat.icon}</span>
@@ -86,7 +86,7 @@ export default function PortfolioTabs() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
                   whileHover={{ y: -8 }}
-                  className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-slate-100"
+                  className="portfolio-card group bg-white dark:bg-[#12121a] rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-slate-100 dark:border-white/10"
                 >
                   {/* الصورة */}
                   <div className={`aspect-video bg-gradient-to-br ${project.color} flex items-center justify-center relative overflow-hidden`}>
@@ -96,10 +96,10 @@ export default function PortfolioTabs() {
 
                   {/* المحتوى */}
                   <div className="p-5">
-                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
                       {project.title}
                     </h3>
-                    <div className="text-sm text-slate-500 mt-1">
+                    <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                       {categories.find((c) => c.id === project.category)?.label}
                     </div>
                   </div>
@@ -113,7 +113,7 @@ export default function PortfolioTabs() {
         <div className="text-center mt-16">
           <Link
             href="/portfolio"
-            className="inline-flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all hover:scale-105 shadow-xl"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-lg transition-all hover:scale-105 shadow-xl bg-white hover:bg-slate-50 text-purple-700 border-2 border-purple-300 shadow-purple-500/10 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-white dark:border-transparent"
           >
             🖼️ عرض كل المشاريع
             <ArrowLeft className="w-5 h-5" />
