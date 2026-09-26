@@ -43,8 +43,7 @@ export default function CTA() {
               </div>
   
               <div className="mt-10 pt-8 border-t border-white/10 text-blue-200">
-                📍 صنعاء – الدائري، حي جامعة صنعاء القديمة | 📞 +967 775566442
-              </div>
+                📍  اليمن - صنعاء | 📞 967775566442+     -     967733111389+            </div>
             </div>
           </div>
         </div>

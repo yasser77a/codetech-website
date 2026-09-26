@@ -12,7 +12,6 @@ export default function Footer() {
               <img src="/logo.png" alt="Code Tech" className="h-16 w-16 object-contain" />
               <div>
                 <div className="text-2xl font-bold">Code Tech</div>
-                <div className="text-sm text-blue-200">كود تك</div>
               </div>
             </div>
             <p className="text-blue-200 leading-relaxed">
@@ -55,12 +54,12 @@ export default function Footer() {
             <ul className="space-y-3 text-blue-200">
               <li className="flex items-start gap-2">
                 <span>📍</span>
-                <span>صنعاء – الدائري، حي جامعة صنعاء القديمة</span>
+                <span>اليمن - صنعاء</span>
               </li>
               <li className="flex items-center gap-2">
                 <span>📞</span>
                 <a href="tel:+967775566442" className="hover:text-white transition" dir="ltr">
-                  +967 775566442
+                  +967 775566442   -   +967 733111389
                 </a>
               </li>
               <li className="flex items-center gap-2">

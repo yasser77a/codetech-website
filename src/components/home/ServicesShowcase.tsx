@@ -133,9 +133,9 @@ export default function ServicesShowcase() {
   
     const activeService = services[activeIndex];
 
-  const cycleStage = () => {
-    setStage((prev) => ((prev + 1) % 3) as 0 | 1 | 2);
-  };
+    const cycleStage = () => {
+        setStage((prev) => ((prev + 1) % 3) as 0 | 1 | 2);
+    };
 
   return (
     <section className="relative bg-slate-950 py-32 overflow-hidden">
@@ -217,31 +217,6 @@ export default function ServicesShowcase() {
                 </div>
               </motion.div>
 
-              {/* أزرار المراحل */}
-              <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                {[0, 1, 2].map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setStage(s as 0 | 1 | 2)}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all backdrop-blur ${
-                      stage === s
-                        ? "bg-white text-slate-900 scale-110 shadow-lg"
-                        : "bg-white/10 text-white hover:bg-white/20"
-                    }`}
-                  >
-                    {s + 1}
-                  </button>
-                ))}
-              </div>
-
-              {/* زر التالي */}
-              <button
-                onClick={cycleStage}
-                className="absolute top-1/2 -translate-y-1/2 -right-4 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 flex items-center justify-center text-white transition-all hover:scale-110 z-10"
-                aria-label="المرحلة التالية"
-              >
-                <ArrowLeft className="w-6 h-6 rotate-180" />
-              </button>
             </div>
           </div>
 

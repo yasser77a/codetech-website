@@ -46,7 +46,7 @@ export default function PortfolioTabs() {
           <h2 className="text-4xl lg:text-6xl font-black text-slate-900 mb-6 tracking-tight">
             مشاريع
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-              {" "}نفتخر بها
+              {" "}من إنجازنا
             </span>
           </h2>
           <p className="text-xl text-slate-600">

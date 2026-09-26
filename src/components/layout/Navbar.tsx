@@ -33,7 +33,6 @@ export default function Navbar() {
             <span className="text-2xl font-bold text-brand-500 dark:text-brand-400 block leading-tight">
               Code Tech
             </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">كود تك</span>
           </div>
         </Link>
 
