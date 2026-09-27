@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cairo, Tajawal } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 const cairo = Cairo({
@@ -231,6 +232,7 @@ export default function RootLayout({
       </head>
       <body className={`${cairo.variable} ${tajawal.variable} antialiased`}>
         {children}
+        <GoogleAnalytics gaId="G-QLZJ8R5LXN" />
       </body>
     </html>
   );
