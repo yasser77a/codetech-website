@@ -18,7 +18,7 @@ const tajawal = Tajawal({
   preload: true,
 });
 
-const SITE_URL = "https://codetech-website-git-main-yasser-alashram.vercel.app";
+const SITE_URL = "https://codetech-website.vercel.app";
 const SITE_NAME = "Code Tech | كود تك";
 
 // ==========================================

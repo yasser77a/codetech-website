@@ -1,8 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://codetech-website-git-main-yasser-alashram.vercel.app";
-
+  const baseUrl = "https://codetech-website.vercel.app";
   return {
     rules: [
       {
