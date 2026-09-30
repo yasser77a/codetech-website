@@ -225,6 +225,12 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" data-scroll-behavior="smooth">
       <head>
+        {/* ✅ Bing Verification - explicit placement */}
+        <meta
+          name="msvalidate.01"
+          content="0CF94F97FEA4F36A2599FE6A20CFE431"
+        />
+        
         {/* 🏢 Structured Data (JSON-LD) */}
         <script
           type="application/ld+json"
