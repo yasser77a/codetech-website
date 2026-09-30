@@ -134,6 +134,9 @@ export const metadata: Metadata = {
   // 🔹 التحقق من الملكية (سنملأه لاحقاً في Google Search Console)
   verification: {
     google: "IYLTbCGTvMLSwA8jS0DQJD5LbRhBLsv040liVGcO9j8",
+    other: {
+      "msvalidate.01": "0CF94F97FEA4F36A2599FE6A20CFE431",
+    },
   },
 
   // 🔹 معلومات أخرى
