@@ -131,12 +131,9 @@ export const metadata: Metadata = {
     },
   },
 
-  // 🔹 التحقق من الملكية (سنملأه لاحقاً في Google Search Console)
+  // 🔹 التحقق من الملكية (Google فقط، Bing في <head>)
   verification: {
     google: "IYLTbCGTvMLSwA8jS0DQJD5LbRhBLsv040liVGcO9j8",
-    other: {
-      "msvalidate.01": "0CF94F97FEA4F36A2599FE6A20CFE431",
-    },
   },
 
   // 🔹 معلومات أخرى
@@ -225,12 +222,12 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" data-scroll-behavior="smooth">
       <head>
-        {/* ✅ Bing Verification - explicit placement */}
+        {/* ✅ Bing Verification - single source of truth */}
         <meta
           name="msvalidate.01"
           content="0CF94F97FEA4F36A2599FE6A20CFE431"
         />
-        
+
         {/* 🏢 Structured Data (JSON-LD) */}
         <script
           type="application/ld+json"
