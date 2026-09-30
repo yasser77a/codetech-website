@@ -470,7 +470,7 @@ function HeroSection() {
       >
         <img
           src="/logo.png"
-          alt=""
+          alt="فريق Code Tech لتطوير البرمجيات في صنعاء"
           className="w-[700px] md:w-[1000px] lg:w-[1200px] h-auto object-contain blur-[2px] opacity-[0.15] dark:opacity-[0.08]"
         />
       </motion.div>
