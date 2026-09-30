@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     template: "%s | Code Tech",
   },
   description:
-    "فريق Code Tech البرمجية في صنعاء - نبني أنظمة برمجية بحماية فائقة ودقة عالية. تطوير مواقع الويب، تطبيقات الجوال، الأنظمة الإدارية، ومشاريع التخرج. أسعار مناسبة مع إمكانية التسديد بالأقساط.",
+    "Code Tech شركة يمنية متخصصة في تطوير المواقع والتطبيقات وأنظمة ERP للمخازن والموارد البشرية والمبيعات في صنعاء. أسعار مناسبة وتقسيط.",
 
   // 🔹 الكلمات المفتاحية
   keywords: [
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     title: "Code Tech | كود تك - فريق برمجي متخصص في صنعاء",
     description:
-      "نبني أنظمة برمجية بحماية فائقة ودقة عالية. تطوير مواقع، تطبيقات، وأنظمة برمجية بإشراف كادر متخصص.",
+      "Code Tech شركة يمنية متخصصة في تطوير المواقع والتطبيقات وأنظمة ERP للمخازن والموارد البشرية والمبيعات في صنعاء. أسعار مناسبة وتقسيط.",
     images: [
       {
         url: "/opengraph-image.png",
@@ -92,7 +92,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Code Tech | كود تك",
     description:
-      "نبني أنظمة برمجية بحماية فائقة ودقة عالية. تطوير مواقع، تطبيقات، وأنظمة.",
+      "Code Tech شركة يمنية متخصصة في تطوير المواقع والتطبيقات وأنظمة ERP في صنعاء. أسعار مناسبة وتقسيط.",
     images: ["/opengraph-image.png"],
     creator: "@yasser77a",
   },
@@ -222,7 +222,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" data-scroll-behavior="smooth">
       <head>
-        {/* ✅ Bing Verification - single source of truth */}
+        {/* ✅ Bing Verification */}
         <meta
           name="msvalidate.01"
           content="0CF94F97FEA4F36A2599FE6A20CFE431"
