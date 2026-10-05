@@ -1,94 +1,145 @@
+// ============================================
+// GET  /api/users  - جلب المستخدمين
+// POST /api/users  - إنشاء مستخدم جديد
+// ============================================
+
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
-import { users, type User } from "@/lib/users";
+import bcrypt from "bcryptjs";
 
-// GET: جلب المستخدمين
+// ============================================
+// GET - جلب كل المستخدمين (للأدمن)
+// ============================================
 export async function GET() {
-  const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
+  try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
+    }
+
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        username: true,
+        fullName: true,
+        email: true,
+        role: true,
+        avatar: true,
+        isActive: true,
+        lastLoginAt: true,
+        createdAt: true,
+      },
+    });
+
+    return NextResponse.json({ users });
+  } catch (error) {
+    console.error("GET /api/users error:", error);
+    return NextResponse.json(
+      { error: "حدث خطأ في جلب المستخدمين" },
+      { status: 500 }
+    );
   }
-
-  const safeUsers = users.map((u: User) => ({
-    id: u.id,
-    username: u.username,
-    fullName: u.fullName,
-    role: u.role,
-    createdAt: u.createdAt,
-  }));
-
-  return NextResponse.json({ users: safeUsers });
 }
 
-// POST: إضافة مستخدم جديد
+// ============================================
+// POST - إنشاء مستخدم جديد
+// ============================================
 export async function POST(request: Request) {
-  const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
-  }
+  try {
+    const session = await getSession();
+    if (!session || session.role !== "ADMIN") {
+      return NextResponse.json(
+        { error: "غير مصرح - يتطلب صلاحيات مدير" },
+        { status: 403 }
+      );
+    }
 
-  // فقط الأدمن يمكنه الإضافة
-  const currentUser = users.find((u: User) => u.id === session.userId);
-  const isAdmin =
-    currentUser?.role === "admin" ||
-    currentUser?.username === "yasser alashram";
+    const body = await request.json();
 
-  if (!isAdmin) {
+    // التحقق
+    if (!body.username || !body.fullName || !body.password) {
+      return NextResponse.json(
+        { error: "اسم المستخدم والاسم الكامل وكلمة المرور مطلوبة" },
+        { status: 400 }
+      );
+    }
+
+    if (body.password.length < 6) {
+      return NextResponse.json(
+        { error: "كلمة المرور يجب أن تكون 6 أحرف على الأقل" },
+        { status: 400 }
+      );
+    }
+
+    const validRoles = ["ADMIN", "EDITOR", "VIEWER"];
+    const role = body.role || "VIEWER";
+    if (!validRoles.includes(role)) {
+      return NextResponse.json(
+        { error: "الدور غير صحيح" },
+        { status: 400 }
+      );
+    }
+
+    // التحقق من عدم وجود المستخدم
+    const existing = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { username: body.username.trim() },
+          ...(body.email ? [{ email: body.email.trim() }] : []),
+        ],
+      },
+    });
+
+    if (existing) {
+      return NextResponse.json(
+        { error: "اسم المستخدم أو البريد موجود مسبقاً" },
+        { status: 400 }
+      );
+    }
+
+    // تشفير كلمة المرور
+    const hashedPassword = bcrypt.hashSync(body.password, 10);
+
+    const user = await prisma.user.create({
+      data: {
+        username: body.username.trim(),
+        fullName: body.fullName.trim(),
+        email: body.email?.trim() || null,
+        password: hashedPassword,
+        role,
+        isActive: body.isActive !== false,
+      },
+      select: {
+        id: true,
+        username: true,
+        fullName: true,
+        email: true,
+        role: true,
+        avatar: true,
+        isActive: true,
+        lastLoginAt: true,
+        createdAt: true,
+      },
+    });
+
+    await prisma.activityLog.create({
+      data: {
+        userId: session.userId,
+        action: "CREATE",
+        entityType: "User",
+        entityId: user.id,
+        details: `إنشاء مستخدم: ${user.username}`,
+      },
+    });
+
+    return NextResponse.json({ success: true, user }, { status: 201 });
+  } catch (error) {
+    console.error("POST /api/users error:", error);
     return NextResponse.json(
-      { error: "ليس لديك صلاحيات لإضافة مستخدمين" },
-      { status: 403 }
+      { error: "حدث خطأ في إنشاء المستخدم" },
+      { status: 500 }
     );
   }
-
-  const body = await request.json();
-  const { fullName, username, password, role } = body;
-
-  // التحقق من البيانات
-  if (!fullName?.trim()) {
-    return NextResponse.json({ error: "الاسم مطلوب" }, { status: 400 });
-  }
-  if (!username?.trim()) {
-    return NextResponse.json({ error: "اسم المستخدم مطلوب" }, { status: 400 });
-  }
-  if (!password || password.length < 6) {
-    return NextResponse.json(
-      { error: "كلمة المرور يجب أن تكون 6 أحرف على الأقل" },
-      { status: 400 }
-    );
-  }
-
-  // التحقق من عدم التكرار
-  const exists = users.find(
-    (u: User) => u.username.toLowerCase() === username.toLowerCase().trim()
-  );
-  if (exists) {
-    return NextResponse.json(
-      { error: "اسم المستخدم مستخدم بالفعل" },
-      { status: 400 }
-    );
-  }
-
-  // إنشاء المستخدم
-  const newUser: User = {
-    id: `user-${Date.now()}`,
-    username: username.trim(),
-    fullName: fullName.trim(),
-    password: bcrypt.hashSync(password, 10),
-    role: role || "viewer",
-    createdAt: new Date(),
-  };
-
-  users.push(newUser);
-
-  return NextResponse.json({
-    success: true,
-    user: {
-      id: newUser.id,
-      username: newUser.username,
-      fullName: newUser.fullName,
-      role: newUser.role,
-      createdAt: newUser.createdAt,
-    },
-  });
 }

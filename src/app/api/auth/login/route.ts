@@ -1,5 +1,9 @@
+// ============================================
+// POST /api/auth/login
+// ============================================
+
 import { NextResponse } from "next/server";
-import { findUser, verifyPassword } from "@/lib/users";
+import { findUser, verifyPassword, updateLastLogin } from "@/lib/users";
 import { createSession } from "@/lib/auth";
 
 export async function POST(request: Request) {
@@ -7,6 +11,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { username, password } = body;
 
+    // Validation
     if (!username || !password) {
       return NextResponse.json(
         { error: "يرجى إدخال اسم المستخدم وكلمة المرور" },
@@ -14,7 +19,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const user = findUser(username);
+    // Find user
+    const user = await findUser(username);
 
     if (!user) {
       return NextResponse.json(
@@ -23,6 +29,15 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check if user is active
+    if (!user.isActive) {
+      return NextResponse.json(
+        { error: "الحساب معطل، تواصل مع المدير" },
+        { status: 403 }
+      );
+    }
+
+    // Verify password
     const valid = verifyPassword(password, user.password);
     if (!valid) {
       return NextResponse.json(
@@ -31,12 +46,16 @@ export async function POST(request: Request) {
       );
     }
 
+    // Create session
     await createSession({
       userId: user.id,
       username: user.username,
       fullName: user.fullName,
       role: user.role,
     });
+
+    // Update last login
+    await updateLastLogin(user.id);
 
     return NextResponse.json({
       success: true,
@@ -45,9 +64,11 @@ export async function POST(request: Request) {
         username: user.username,
         fullName: user.fullName,
         role: user.role,
+        avatar: user.avatar,
       },
     });
   } catch (error) {
+    console.error("Login error:", error);
     return NextResponse.json(
       { error: "حدث خطأ في الخادم" },
       { status: 500 }

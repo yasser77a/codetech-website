@@ -1,0 +1,256 @@
+// ============================================
+// CodeTech Website - Prisma Schema
+// Database: PostgreSQL (Supabase)
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// 1. Users - ط§ظ„ظ…ط³طھط®ط¯ظ…ظˆظ†
+// ============================================
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  fullName     String
+  email        String?  @unique
+  password     String
+  role         Role     @default(VIEWER)
+  avatar       String?
+  isActive     Boolean  @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt @default(now())
+
+  activities   ActivityLog[]
+  blogPosts    BlogPost[]
+  inquiries    Inquiry[]     @relation("AssignedInquiries")
+  reviews      Review[]      @relation("ReviewAuthor")
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+// ============================================
+// 2. Projects - ط§ظ„ظ…ط´ط§ط±ظٹط¹
+// ============================================
+model Project {
+  id           String          @id @default(cuid())
+  title        String
+  slug         String          @unique
+  description  String          @db.Text
+  content      String?         @db.Text
+  category     ProjectCategory
+  client       String?
+  technologies String[]
+  coverImage   String?
+  gallery      String[]
+  liveUrl      String?
+  githubUrl    String?
+  status       PublishStatus   @default(DRAFT)
+  featured     Boolean         @default(false)
+  order        Int             @default(0)
+  views        Int             @default(0)
+  completedAt  DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt @default(now())
+
+  @@index([category, status])
+  @@map("projects")
+}
+
+enum ProjectCategory {
+  WEBSITES
+  APPS
+  SYSTEMS
+  GRADUATION
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+// ============================================
+// 3. Services - ط§ظ„ط®ط¯ظ…ط§طھ
+// ============================================
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  icon        String?
+  image       String?
+  features    String[]
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt @default(now())
+
+  @@map("services")
+}
+
+// ============================================
+// 4. BlogPosts - ط§ظ„ظ…ظ†ط´ظˆط±ط§طھ
+// ============================================
+model BlogPost {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  excerpt     String?       @db.Text
+  content     String        @db.Text
+  coverImage  String?
+  category    String?
+  tags        String[]
+  status      PublishStatus @default(DRAFT)
+  views       Int           @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt @default(now())
+
+  authorId    String?
+  author      User?         @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  comments    Comment[]
+
+  @@index([status, publishedAt])
+  @@map("blog_posts")
+}
+
+// ============================================
+// 5. Comments - ط§ظ„طھط¹ظ„ظٹظ‚ط§طھ
+// ============================================
+model Comment {
+  id        String         @id @default(cuid())
+  name      String
+  email     String
+  content   String         @db.Text
+  status    CommentStatus  @default(PENDING)
+  postId    String
+  post      BlogPost       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime       @default(now())
+
+  @@index([postId, status])
+  @@map("comments")
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ============================================
+// 6. Reviews - ط§ظ„ظ…ط±ط§ط¬ط¹ط§طھ
+// ============================================
+model Review {
+  id         String   @id @default(cuid())
+  name       String
+  email      String?
+  company    String?
+  position   String?
+  content    String   @db.Text
+  rating     Int      @default(5)
+  avatar     String?
+  isApproved Boolean  @default(false)
+  isFeatured Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt @default(now())
+
+  authorId   String?
+  author     User?    @relation("ReviewAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@map("reviews")
+}
+
+// ============================================
+// 7. Inquiries - ط§ظ„ط§ط³طھظپط³ط§ط±ط§طھ
+// ============================================
+model Inquiry {
+  id          String         @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  subject     String?
+  message     String         @db.Text
+  serviceType String?
+  budget      String?
+  status      InquiryStatus  @default(NEW)
+  notes       String?        @db.Text
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt @default(now())
+
+  assignedToId String?
+  assignedTo   User?         @relation("AssignedInquiries", fields: [assignedToId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@map("inquiries")
+}
+
+enum InquiryStatus {
+  NEW
+  IN_PROGRESS
+  REPLIED
+  CLOSED
+  SPAM
+}
+
+// ============================================
+// 8. Notifications - ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ
+// ============================================
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String   @db.Text
+  type      String   @default("info")
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([isRead, createdAt])
+  @@map("notifications")
+}
+
+// ============================================
+// 9. SiteSettings - ط¥ط¹ط¯ط§ط¯ط§طھ ط§ظ„ظ…ظˆظ‚ط¹
+// ============================================
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  category  String   @default("general")
+  updatedAt DateTime @updatedAt @default(now())
+
+  @@map("site_settings")
+}
+
+// ============================================
+// 10. ActivityLog - ط³ط¬ظ„ ط§ظ„ظ†ط´ط§ط·
+// ============================================
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String
+  entityId   String?
+  details    String?  @db.Text
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@map("activity_logs")
+}

@@ -19,7 +19,7 @@ const tajawal = Tajawal({
   preload: true,
 });
 
-const SITE_URL = "https://codetech-website.vercel.app";
+const SITE_URL = "https://codetech-website-yasser-alashram.vercel.app";
 const SITE_NAME = "Code Tech | كود تك";
 
 // ==========================================
@@ -238,7 +238,9 @@ export default function RootLayout({
       </head>
       <body className={`${cairo.variable} ${tajawal.variable} antialiased`}>
         {children}
-        <GoogleAnalytics gaId="G-QLZJ8R5LXN" />
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
       </body>
     </html>
   );

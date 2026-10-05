@@ -1,11 +1,27 @@
+// ============================================
+// CodeTech Website - JWT Auth (jose)
+// ============================================
+
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
+// ⚠️ JWT_SECRET يجب أن يكون موجوداً في .env.local
+const JWT_SECRET_VALUE = process.env.JWT_SECRET;
+
+if (!JWT_SECRET_VALUE) {
+  console.error(
+    "❌ CRITICAL: JWT_SECRET is not set in environment variables!\n" +
+    "Please add it to .env.local and .env"
+  );
+}
+
 const SECRET = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET || "codetech-super-secret-key-change-in-production-2026"
+  JWT_SECRET_VALUE || "TEMP_FALLBACK_DO_NOT_USE_IN_PRODUCTION"
 );
 
-// ✅ إضافة index signature لحل الخطأ
+// ============================================
+// Types
+// ============================================
 export interface SessionPayload {
   userId: string;
   username: string;
@@ -14,6 +30,9 @@ export interface SessionPayload {
   [key: string]: unknown;
 }
 
+// ============================================
+// Create session cookie
+// ============================================
 export async function createSession(payload: SessionPayload) {
   const token = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
@@ -26,11 +45,14 @@ export async function createSession(payload: SessionPayload) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 60 * 60 * 24 * 7, // 7 days
     path: "/",
   });
 }
 
+// ============================================
+// Get current session
+// ============================================
 export async function getSession(): Promise<SessionPayload | null> {
   try {
     const cookieStore = await cookies();
@@ -49,7 +71,26 @@ export async function getSession(): Promise<SessionPayload | null> {
   }
 }
 
+// ============================================
+// Destroy session
+// ============================================
 export async function destroySession() {
   const cookieStore = await cookies();
   cookieStore.delete("codetech_session");
+}
+
+// ============================================
+// Require authentication (for API routes)
+// ============================================
+export async function requireAuth(): Promise<SessionPayload | null> {
+  return await getSession();
+}
+
+// ============================================
+// Require admin role
+// ============================================
+export async function requireAdmin(): Promise<SessionPayload | null> {
+  const session = await getSession();
+  if (!session || session.role !== "ADMIN") return null;
+  return session;
 }

@@ -1,26 +1,94 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Globe, Smartphone, Monitor, GraduationCap, MessageSquare, Star,
-  TrendingUp, Users, ArrowUpRight, ArrowDownRight
+  Globe, Smartphone, Monitor, GraduationCap, MessageSquare,
+  Star, TrendingUp, Users, FileText, Wrench, Bell,
+  ArrowUpRight, Loader2, Inbox
 } from "lucide-react";
+import type { DashboardStats } from "@/lib/stats";
 
-const stats = [
-  { icon: Globe, label: "المواقع", value: 24, change: "+12%", trend: "up", color: "from-blue-500 to-cyan-500" },
-  { icon: Smartphone, label: "التطبيقات", value: 18, change: "+8%", trend: "up", color: "from-green-500 to-teal-500" },
-  { icon: Monitor, label: "الأنظمة", value: 12, change: "+5%", trend: "up", color: "from-purple-500 to-indigo-500" },
-  { icon: GraduationCap, label: "مشاريع التخرج", value: 35, change: "+18%", trend: "up", color: "from-orange-500 to-red-500" },
-];
-
-const recentInquiries = [
-  { id: 1, name: "أحمد علي", service: "موقع متجر", time: "منذ 5 دقائق", status: "جديد" },
-  { id: 2, name: "سارة محمد", service: "تطبيق جوال", time: "منذ ساعة", status: "جديد" },
-  { id: 3, name: "خالد يوسف", service: "نظام إداري", time: "منذ 3 ساعات", status: "قيد المعالجة" },
-  { id: 4, name: "فاطمة الزهراء", service: "مشروع تخرج", time: "أمس", status: "تم الرد" },
-];
+interface RecentInquiry {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  subject: string | null;
+  serviceType: string | null;
+  message: string;
+  status: string;
+  createdAt: string;
+}
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [inquiries, setInquiries] = useState<RecentInquiry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/admin/stats").then((r) => r.json()),
+      fetch("/api/admin/recent").then((r) => r.json()),
+    ])
+      .then(([statsData, recentData]) => {
+        if (statsData.stats) setStats(statsData.stats);
+        if (recentData.inquiries) setInquiries(recentData.inquiries);
+      })
+      .catch((err) => console.error("Dashboard fetch error:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="text-center py-16 text-slate-500">
+        فشل في تحميل الإحصائيات
+      </div>
+    );
+  }
+
+  // ============================================
+  // بطاقات الإحصائيات
+  // ============================================
+  const statCards = [
+    {
+      icon: Globe,
+      label: "المواقع",
+      value: stats.projects.websites,
+      color: "from-blue-500 to-cyan-500",
+      href: "/admin/projects/websites",
+    },
+    {
+      icon: Smartphone,
+      label: "التطبيقات",
+      value: stats.projects.apps,
+      color: "from-green-500 to-teal-500",
+      href: "/admin/projects/apps",
+    },
+    {
+      icon: Monitor,
+      label: "الأنظمة",
+      value: stats.projects.systems,
+      color: "from-purple-500 to-indigo-500",
+      href: "/admin/projects/systems",
+    },
+    {
+      icon: GraduationCap,
+      label: "مشاريع التخرج",
+      value: stats.projects.graduation,
+      color: "from-orange-500 to-red-500",
+      href: "/admin/projects/graduation",
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* الترحيب */}
@@ -35,88 +103,132 @@ export default function DashboardPage() {
           <p className="text-slate-300">
             إليك نظرة سريعة على أداء Code Tech اليوم
           </p>
+
+          {/* شريط الإحصائيات السريعة */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            <div className="bg-white/10 backdrop-blur rounded-xl p-3">
+              <div className="text-2xl font-black">{stats.projects.total}</div>
+              <div className="text-xs text-slate-300">إجمالي المشاريع</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur rounded-xl p-3">
+              <div className="text-2xl font-black">{stats.inquiries.new}</div>
+              <div className="text-xs text-slate-300">استفسارات جديدة</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur rounded-xl p-3">
+              <div className="text-2xl font-black">{stats.reviews.total}</div>
+              <div className="text-xs text-slate-300">المراجعات</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur rounded-xl p-3">
+              <div className="text-2xl font-black">{stats.users.total}</div>
+              <div className="text-xs text-slate-300">المستخدمون</div>
+            </div>
+          </div>
         </div>
       </motion.div>
 
-      {/* الإحصائيات */}
+      {/* بطاقات الإحصائيات الرئيسية */}
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, i) => {
+        {statCards.map((stat, i) => {
           const Icon = stat.icon;
-          const TrendIcon = stat.trend === "up" ? ArrowUpRight : ArrowDownRight;
           return (
-            <motion.div
+            <motion.a
               key={i}
+              href={stat.href}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-lg transition-all"
+              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-lg transition-all cursor-pointer"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <div className={`flex items-center gap-1 text-sm font-bold ${
-                  stat.trend === "up" ? "text-green-500" : "text-red-500"
-                }`}>
-                  <TrendIcon className="w-4 h-4" />
-                  {stat.change}
-                </div>
+                <ArrowUpRight className="w-5 h-5 text-slate-400" />
               </div>
-              <div className="text-3xl font-black text-slate-900 mb-1">{stat.value}</div>
-              <div className="text-sm text-slate-500">{stat.label}</div>
-            </motion.div>
+              <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">
+                {stat.value}
+              </div>
+              <div className="text-sm text-slate-500 dark:text-slate-400">{stat.label}</div>
+            </motion.a>
           );
         })}
       </div>
 
       {/* صفان */}
       <div className="grid lg:grid-cols-3 gap-6">
-        
         {/* الاستفسارات الأخيرة */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm"
+          className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm"
         >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <MessageSquare className="w-6 h-6 text-blue-500" />
-              <h2 className="text-xl font-bold text-slate-900">الاستفسارات الأخيرة</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                الاستفسارات الأخيرة
+              </h2>
             </div>
-            <a href="/admin/inquiries" className="text-sm text-blue-600 hover:underline font-semibold">
+            <a
+              href="/admin/inquiries"
+              className="text-sm text-blue-600 hover:underline font-semibold"
+            >
               عرض الكل ←
             </a>
           </div>
 
-          <div className="space-y-3">
-            {recentInquiries.map((inq) => (
-              <div
-                key={inq.id}
-                className="flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 rounded-xl transition cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white font-bold">
-                    {inq.name[0]}
+          {inquiries.length === 0 ? (
+            <div className="text-center py-12 text-slate-400">
+              <Inbox className="w-12 h-12 mx-auto mb-3 opacity-50" />
+              <p>لا توجد استفسارات بعد</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {inquiries.map((inq) => (
+                <div
+                  key={inq.id}
+                  className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white font-bold">
+                      {inq.name[0]}
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900 dark:text-white">
+                        {inq.name}
+                      </div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        {inq.serviceType || inq.subject || "استفسار عام"}
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-bold text-slate-900">{inq.name}</div>
-                    <div className="text-sm text-slate-500">{inq.service}</div>
+                  <div className="text-left">
+                    <div
+                      className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
+                        inq.status === "NEW"
+                          ? "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400"
+                          : inq.status === "IN_PROGRESS"
+                          ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400"
+                          : "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400"
+                      }`}
+                    >
+                      {inq.status === "NEW"
+                        ? "جديد"
+                        : inq.status === "IN_PROGRESS"
+                        ? "قيد المعالجة"
+                        : inq.status === "REPLIED"
+                        ? "تم الرد"
+                        : "مغلق"}
+                    </div>
+                    <div className="text-xs text-slate-400 mt-1">
+                      {new Date(inq.createdAt).toLocaleDateString("ar-YE")}
+                    </div>
                   </div>
                 </div>
-                <div className="text-left">
-                  <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
-                    inq.status === "جديد" ? "bg-blue-100 text-blue-700" :
-                    inq.status === "قيد المعالجة" ? "bg-yellow-100 text-yellow-700" :
-                    "bg-green-100 text-green-700"
-                  }`}>
-                    {inq.status}
-                  </div>
-                  <div className="text-xs text-slate-400 mt-1">{inq.time}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </motion.div>
 
         {/* بطاقات جانبية */}
@@ -128,9 +240,13 @@ export default function DashboardPage() {
             className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl p-6 text-white"
           >
             <Star className="w-8 h-8 mb-3" />
-            <div className="text-4xl font-black mb-1">4.5</div>
+            <div className="text-4xl font-black mb-1">
+              {stats.reviews.averageRating.toFixed(1)}
+            </div>
             <div className="text-sm opacity-90">متوسط التقييم</div>
-            <div className="text-xs opacity-75 mt-1">من 2,084 مراجعة</div>
+            <div className="text-xs opacity-75 mt-1">
+              من {stats.reviews.total} مراجعة
+            </div>
           </motion.div>
 
           <motion.div
@@ -139,10 +255,12 @@ export default function DashboardPage() {
             transition={{ delay: 0.6 }}
             className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-6 text-white"
           >
-            <Users className="w-8 h-8 mb-3" />
-            <div className="text-4xl font-black mb-1">+150</div>
-            <div className="text-sm opacity-90">عميل سعيد</div>
-            <div className="text-xs opacity-75 mt-1">خلال 2025</div>
+            <FileText className="w-8 h-8 mb-3" />
+            <div className="text-4xl font-black mb-1">{stats.posts.total}</div>
+            <div className="text-sm opacity-90">المنشورات</div>
+            <div className="text-xs opacity-75 mt-1">
+              {stats.posts.published} منشور • {stats.posts.draft} مسودة
+            </div>
           </motion.div>
 
           <motion.div
@@ -151,12 +269,81 @@ export default function DashboardPage() {
             transition={{ delay: 0.7 }}
             className="bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl p-6 text-white"
           >
-            <TrendingUp className="w-8 h-8 mb-3" />
-            <div className="text-4xl font-black mb-1">98%</div>
-            <div className="text-sm opacity-90">نسبة الرضا</div>
+            <Wrench className="w-8 h-8 mb-3" />
+            <div className="text-4xl font-black mb-1">{stats.services.active}</div>
+            <div className="text-sm opacity-90">الخدمات النشطة</div>
+            <div className="text-xs opacity-75 mt-1">
+              من {stats.services.total} خدمة
+            </div>
           </motion.div>
+
+          <motion.a
+            href="/admin/notifications"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 flex items-center justify-between hover:shadow-lg transition cursor-pointer"
+          >
+            <div>
+              <div className="text-2xl font-black text-slate-900 dark:text-white">
+                {stats.notifications.unread}
+              </div>
+              <div className="text-sm text-slate-500">إشعارات غير مقروءة</div>
+            </div>
+            <Bell className="w-8 h-8 text-slate-300" />
+          </motion.a>
         </div>
       </div>
+
+      {/* ملخص الاستفسارات */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.9 }}
+        className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm"
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <TrendingUp className="w-6 h-6 text-blue-500" />
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            ملخص الاستفسارات
+          </h2>
+        </div>
+
+        <div className="grid md:grid-cols-4 gap-4">
+          <div className="bg-blue-50 dark:bg-blue-500/10 rounded-xl p-4 border border-blue-100 dark:border-blue-500/20">
+            <div className="text-3xl font-black text-blue-600 dark:text-blue-400">
+              {stats.inquiries.new}
+            </div>
+            <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              جديدة
+            </div>
+          </div>
+          <div className="bg-yellow-50 dark:bg-yellow-500/10 rounded-xl p-4 border border-yellow-100 dark:border-yellow-500/20">
+            <div className="text-3xl font-black text-yellow-600 dark:text-yellow-400">
+              {stats.inquiries.inProgress}
+            </div>
+            <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              قيد المعالجة
+            </div>
+          </div>
+          <div className="bg-green-50 dark:bg-green-500/10 rounded-xl p-4 border border-green-100 dark:border-green-500/20">
+            <div className="text-3xl font-black text-green-600 dark:text-green-400">
+              {stats.inquiries.replied}
+            </div>
+            <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              تم الرد
+            </div>
+          </div>
+          <div className="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+            <div className="text-3xl font-black text-slate-600 dark:text-slate-300">
+              {stats.inquiries.closed}
+            </div>
+            <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              مغلقة
+            </div>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
