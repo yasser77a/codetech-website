@@ -3,7 +3,26 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ShoppingCart, Package, Building2, Hospital, BookOpen, CreditCard, Bot, Radio, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Sparkles } from "lucide-react";
+import ProjectCard from "@/components/portfolio/ProjectCard";
+
+interface Project {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  category: string;
+  client: string | null;
+  technologies: string[];
+  coverImage: string | null;
+  featured: boolean;
+  views: number;
+  createdAt: Date;
+}
+
+interface PortfolioTabsProps {
+  projects: Project[];
+}
 
 const categories = [
   { id: "all", label: "الكل", icon: "🎯" },
@@ -13,112 +32,164 @@ const categories = [
   { id: "graduation", label: "مشاريع التخرج", icon: "🎓" },
 ];
 
-const projects = [
-  { id: 1, title: "متجر إلكتروني متكامل", category: "websites", icon: ShoppingCart, color: "from-blue-500 to-cyan-500" },
-  { id: 2, title: "تطبيق توصيل طلبات", category: "apps", icon: Package, color: "from-green-500 to-teal-500" },
-  { id: 3, title: "نظام إدارة مستشفى", category: "systems", icon: Hospital, color: "from-red-500 to-pink-500" },
-  { id: 4, title: "موقع شركة عقارية", category: "websites", icon: Building2, color: "from-purple-500 to-indigo-500" },
-  { id: 5, title: "تطبيق تعليمي", category: "apps", icon: BookOpen, color: "from-orange-500 to-yellow-500" },
-  { id: 6, title: "نظام نقاط بيع POS", category: "systems", icon: CreditCard, color: "from-teal-500 to-cyan-500" },
-  { id: 7, title: "مشروع تخرج - AI", category: "graduation", icon: Bot, color: "from-indigo-500 to-purple-500" },
-  { id: 8, title: "مشروع تخرج - IoT", category: "graduation", icon: Radio, color: "from-pink-500 to-rose-500" },
-];
+// Mapping بين category enum و tabs
+const categoryMap: Record<string, string> = {
+  WEBSITES: "websites",
+  APPS: "apps",
+  SYSTEMS: "systems",
+  GRADUATION: "graduation",
+};
 
-export default function PortfolioTabs() {
+export default function PortfolioTabs({ projects }: PortfolioTabsProps) {
   const [active, setActive] = useState("all");
 
-  const filtered = active === "all" ? projects : projects.filter((p) => p.category === active);
+  const filtered =
+    active === "all"
+      ? projects.slice(0, 8) // عرض أول 8 فقط في الرئيسية
+      : projects
+          .filter((p) => categoryMap[p.category] === active)
+          .slice(0, 8);
 
   return (
-    <section className="portfolio-tabs-section py-32 bg-white dark:bg-[#0a0a0f] transition-colors duration-300">
+    <section className="py-24 lg:py-32 bg-gradient-to-b from-white to-slate-50 dark:from-[#0a0a0f] dark:to-[#0f0f18] transition-colors duration-300">
       <div className="container mx-auto px-4">
-        
-        {/* العنوان */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="inline-flex items-center gap-2 bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 px-4 py-2 rounded-full font-bold text-sm mb-4 border border-purple-100 dark:border-purple-500/20">
-            ✨ معرض أعمالنا
-          </span>
+          <motion.span
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600 dark:text-purple-400 px-5 py-2.5 rounded-full font-bold text-sm mb-6 border border-purple-200 dark:border-purple-500/20 backdrop-blur"
+          >
+            <Sparkles className="w-4 h-4" />
+            معرض أعمالنا
+          </motion.span>
+
           <h2 className="text-4xl lg:text-6xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">
             مشاريع
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
-              {" "}من إنجازنا
+              {" "}
+              من إنجازنا
             </span>
           </h2>
-          <p className="text-xl text-slate-600 dark:text-slate-400">
-            اكتشف مجموعة متنوعة من مشاريعنا في مختلف المجالات
+
+          <p className="text-lg lg:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            اكتشف مجموعة متنوعة من مشاريعنا في مختلف المجالات، مصممة بعناية
+            وبأحدث التقنيات
           </p>
         </motion.div>
 
-        {/* التبويبات */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActive(cat.id)}
-              className={`px-6 py-3 rounded-2xl font-bold transition-all flex items-center gap-2 ${
-                active === cat.id
-                  ? "portfolio-tab-active bg-slate-900 dark:bg-purple-600 text-white shadow-lg scale-105"
-                  : "portfolio-tab-inactive bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10"
-              }`}
-            >
-              <span>{cat.icon}</span>
-              <span>{cat.label}</span>
-            </button>
-          ))}
-        </div>
+        {/* Tabs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="flex flex-wrap justify-center gap-3 mb-12"
+        >
+          {categories.map((cat, i) => {
+            const isActive = active === cat.id;
+            const count =
+              cat.id === "all"
+                ? projects.length
+                : projects.filter((p) => categoryMap[p.category] === cat.id)
+                    .length;
 
-        {/* الشبكة */}
-        <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <AnimatePresence mode="popLayout">
-            {filtered.map((project) => {
-              const Icon = project.icon;
-              return (
-                <motion.div
-                  key={project.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3 }}
-                  whileHover={{ y: -8 }}
-                  className="portfolio-card group bg-white dark:bg-[#12121a] rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-slate-100 dark:border-white/10"
-                >
-                  {/* الصورة */}
-                  <div className={`aspect-video bg-gradient-to-br ${project.color} flex items-center justify-center relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all" />
-                    <Icon className="w-16 h-16 text-white relative z-10 group-hover:scale-125 transition-transform duration-500" strokeWidth={1.5} />
-                  </div>
-
-                  {/* المحتوى */}
-                  <div className="p-5">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
-                      {project.title}
-                    </h3>
-                    <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                      {categories.find((c) => c.id === project.category)?.label}
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
+            return (
+              <motion.button
+                key={cat.id}
+                onClick={() => setActive(cat.id)}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                suppressHydrationWarning
+                className={`relative px-5 lg:px-6 py-3 rounded-2xl font-bold transition-all flex items-center gap-2 ${
+                  isActive
+                    ? "bg-slate-900 dark:bg-gradient-to-r dark:from-blue-600 dark:to-purple-600 text-white shadow-lg shadow-blue-500/20"
+                    : "bg-white dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10"
+                }`}
+              >
+                <span className="text-lg">{cat.icon}</span>
+                <span>{cat.label}</span>
+                {count > 0 && (
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded-full font-bold ${
+                      isActive
+                        ? "bg-white/20"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                    }`}
+                  >
+                    {count}
+                  </span>
+                )}
+              </motion.button>
+            );
+          })}
         </motion.div>
 
-        {/* زر */}
-        <div className="text-center mt-16">
+        {/* Grid */}
+        <AnimatePresence mode="wait">
+          {filtered.length > 0 ? (
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            >
+              {filtered.map((project, i) => (
+                <ProjectCard
+                  key={project.id}
+                  id={project.id}
+                  slug={project.slug}
+                  title={project.title}
+                  description={project.description}
+                  client={project.client}
+                  technologies={project.technologies}
+                  coverImage={project.coverImage}
+                  featured={project.featured}
+                  views={project.views}
+                  index={i}
+                />
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-20"
+            >
+              <p className="text-slate-500 dark:text-slate-400 text-lg">
+                لا توجد مشاريع في هذا التصنيف
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* CTA Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mt-16"
+        >
           <Link
             href="/portfolio"
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-lg transition-all hover:scale-105 shadow-xl bg-white hover:bg-slate-50 text-purple-700 border-2 border-purple-300 shadow-purple-500/10 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-white dark:border-transparent"
+            className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-lg transition-all hover:scale-105 shadow-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-purple-500/20"
           >
-            🖼️ عرض كل المشاريع
-            <ArrowLeft className="w-5 h-5" />
+            عرض كل المشاريع
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { getPublicProjects } from "@/lib/prisma-queries";
 import {
   Sparkles,
   ArrowLeft,
@@ -68,6 +69,11 @@ const servicesMarquee = [
   { label: "أمن سيبراني", icon: Shield },
   { label: "مشاريع تخرج", icon: GraduationCap },
 ];
+
+async function PortfolioSection() {
+  const projects = await getPublicProjects({ limit: 12 });
+  return <PortfolioTabs projects={projects} />;
+}
 
 // ==========================================
 // 🖼️ شرائح الـ Hero
@@ -433,7 +439,7 @@ export default function HomePage() {
       <WebsitesSection />
       <AppsSection />
       <ServicesShowcase />
-      <PortfolioTabs />
+      <PortfolioSection />
       <PricingSection />
       <Reviews />
       <FAQSection />
