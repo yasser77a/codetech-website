@@ -201,6 +201,7 @@ export default function AdminSidebar() {
               {hasSubmenu ? (
                 <>
                   <button
+                    suppressHydrationWarning
                     onClick={() => toggleMenu(item.label)}
                     className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition ${
                       isActive

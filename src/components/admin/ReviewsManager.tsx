@@ -1,242 +1,396 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Star,
   Search,
-  Check,
-  X,
   Trash2,
-  MessageSquare,
-  Clock,
-  TrendingUp,
+  CheckCircle2,
+  XCircle,
+  Sparkles,
+  Loader2,
+  AlertCircle,
+  Filter,
+  RefreshCw,
+  Quote,
+  BadgeCheck,
+  Shield,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
+// ==========================================
+// Types
+// ==========================================
 interface Review {
   id: string;
   name: string;
-  email: string;
+  email: string | null;
+  company: string | null;
+  position: string | null;
+  content: string;
   rating: number;
-  comment: string;
-  approved: boolean;
+  avatar: string | null;
+  isApproved: boolean;
+  isFeatured: boolean;
+  isVerified: boolean;
   createdAt: string;
-  service: string;
+  updatedAt: string;
 }
 
-const initialReviews: Review[] = [
-  {
-    id: "1",
-    name: "أحمد الشامي",
-    email: "ahmed@example.com",
-    rating: 5,
-    comment: "تجربة رائعة! الفريق احترافي جداً والتسليم كان في الموعد. أنصح بهم بشدة.",
-    approved: true,
-    createdAt: "2026-09-22",
-    service: "موقع متجر",
-  },
-  {
-    id: "2",
-    name: "سارة العمراني",
-    email: "sara@example.com",
-    rating: 5,
-    comment: "أفضل شركة برمجية تعاملت معها في صنعاء. الجودة ممتازة والسعر مناسب.",
-    approved: true,
-    createdAt: "2026-09-21",
-    service: "تطبيق جوال",
-  },
-  {
-    id: "3",
-    name: "محمد القباطي",
-    email: "m@example.com",
-    rating: 4,
-    comment: "ساعدوني في مشروع تخرجي وكانوا متعاونين جداً. شكراً Code Tech.",
-    approved: false,
-    createdAt: "2026-09-20",
-    service: "مشروع تخرج",
-  },
-  {
-    id: "4",
-    name: "خالد يوسف",
-    email: "k@example.com",
-    rating: 5,
-    comment: "خدمة ممتازة ودعم فني متواصل. أنصح بالتعامل معهم.",
-    approved: true,
-    createdAt: "2026-09-19",
-    service: "نظام إداري",
-  },
-  {
-    id: "5",
-    name: "نورة محمد",
-    email: "n@example.com",
-    rating: 3,
-    comment: "الخدمة جيدة لكن التسليم تأخر قليلاً.",
-    approved: false,
-    createdAt: "2026-09-18",
-    service: "موقع شخصي",
-  },
-];
-
+// ==========================================
+// Main Component
+// ==========================================
 export default function ReviewsManager() {
-  const [reviews, setReviews] = useState(initialReviews);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<"all" | "pending" | "approved">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "approved" | "pending" | "featured" | "verified"
+  >("all");
 
-  const filtered = reviews.filter((r) => {
-    const matchSearch = r.name.includes(search) || r.comment.includes(search);
-    const matchFilter =
-      filter === "all" ? true : filter === "approved" ? r.approved : !r.approved;
-    return matchSearch && matchFilter;
-  });
+  // ==========================================
+  // Fetch Reviews
+  // ==========================================
+  const fetchReviews = useCallback(async () => {
+    setLoading(true);
+    setError("");
 
-  const stats = {
-    total: reviews.length,
-    approved: reviews.filter((r) => r.approved).length,
-    pending: reviews.filter((r) => !r.approved).length,
-    avg: (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1),
-  };
+    try {
+      const res = await fetch("/api/reviews");
+      const data = await res.json();
 
-  const approve = (id: string) => {
-    setReviews((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, approved: true } : r))
-    );
-  };
+      if (res.ok) {
+        setReviews(data.reviews || []);
+      } else {
+        setError(data.error || "فشل في جلب المراجعات");
+      }
+    } catch (err) {
+      console.error("Fetch reviews error:", err);
+      setError("تعذر الاتصال بالخادم");
+    }
 
-  const reject = (id: string) => {
-    setReviews((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, approved: false } : r))
-    );
-  };
+    setLoading(false);
+  }, []);
 
-  const remove = (id: string) => {
-    if (confirm("حذف هذا التقييم؟")) {
-      setReviews((prev) => prev.filter((r) => r.id !== id));
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
+
+  // ==========================================
+  // Handlers
+  // ==========================================
+  const handleToggle = async (
+    id: string,
+    field: "isApproved" | "isFeatured" | "isVerified",
+    currentValue: boolean
+  ) => {
+    try {
+      const res = await fetch(`/api/reviews/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [field]: !currentValue }),
+      });
+
+      if (res.ok) {
+        setReviews((prev) =>
+          prev.map((r) => (r.id === id ? { ...r, [field]: !currentValue } : r))
+        );
+      }
+    } catch (err) {
+      console.error("Toggle error:", err);
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!confirm("هل أنت متأكد من حذف هذه المراجعة؟")) return;
+
+    try {
+      const res = await fetch(`/api/reviews/${id}`, { method: "DELETE" });
+
+      if (res.ok) {
+        setReviews((prev) => prev.filter((r) => r.id !== id));
+      } else {
+        const data = await res.json();
+        alert(data.error || "فشل الحذف");
+      }
+    } catch {
+      alert("تعذر الاتصال بالخادم");
+    }
+  };
+
+  // ==========================================
+  // Filter
+  // ==========================================
+  const filtered = useMemo(() => {
+    return reviews.filter((r) => {
+      const matchSearch =
+        r.name.toLowerCase().includes(search.toLowerCase()) ||
+        r.content.toLowerCase().includes(search.toLowerCase()) ||
+        (r.company || "").toLowerCase().includes(search.toLowerCase());
+
+      let matchStatus = true;
+      if (statusFilter === "approved") matchStatus = r.isApproved;
+      else if (statusFilter === "pending") matchStatus = !r.isApproved;
+      else if (statusFilter === "featured") matchStatus = r.isFeatured;
+      else if (statusFilter === "verified") matchStatus = r.isVerified;
+
+      return matchSearch && matchStatus;
+    });
+  }, [reviews, search, statusFilter]);
+
+  // ==========================================
+  // Stats
+  // ==========================================
+  const stats = useMemo(() => {
+    const approved = reviews.filter((r) => r.isApproved);
+    const avgRating =
+      approved.length > 0
+        ? approved.reduce((acc, r) => acc + r.rating, 0) / approved.length
+        : 0;
+
+    return {
+      total: reviews.length,
+      approved: approved.length,
+      pending: reviews.filter((r) => !r.isApproved).length,
+      featured: reviews.filter((r) => r.isFeatured).length,
+      verified: reviews.filter((r) => r.isVerified).length,
+      avgRating,
+    };
+  }, [reviews]);
+
+  // ==========================================
+  // Render
+  // ==========================================
   return (
     <div className="space-y-6">
-      {/* الرأس */}
-      <div className="flex items-center gap-3">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
-          <Star className="w-6 h-6 text-white" />
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
+            <Star className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-black text-slate-900 dark:text-white">
+              التقييمات
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {stats.total} مراجعة • {stats.pending} في الانتظار
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white">
-            التقييمات
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            إدارة تقييمات العملاء
-          </p>
-        </div>
+
+        <button
+          onClick={fetchReviews}
+          disabled={loading}
+          className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-bold transition disabled:opacity-50"
+        >
+          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+          تحديث
+        </button>
       </div>
 
-      {/* الإحصائيات */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {[
           {
-            icon: MessageSquare,
-            label: "الإجمالي",
+            label: "الكل",
             value: stats.total,
+            icon: Star,
+            status: "all" as const,
             color: "from-blue-500 to-cyan-500",
           },
           {
-            icon: Check,
-            label: "المعتمدة",
+            label: "معتمد",
             value: stats.approved,
-            color: "from-green-500 to-teal-500",
+            icon: CheckCircle2,
+            status: "approved" as const,
+            color: "from-green-500 to-emerald-500",
           },
           {
-            icon: Clock,
-            label: "قيد المراجعة",
+            label: "معلق",
             value: stats.pending,
+            icon: AlertCircle,
+            status: "pending" as const,
             color: "from-yellow-500 to-orange-500",
           },
           {
-            icon: TrendingUp,
-            label: "متوسط التقييم",
-            value: stats.avg,
+            label: "مميز",
+            value: stats.featured,
+            icon: Sparkles,
+            status: "featured" as const,
             color: "from-purple-500 to-pink-500",
           },
-        ].map((stat, i) => {
+          {
+            label: "موثق",
+            value: stats.verified,
+            icon: BadgeCheck,
+            status: "verified" as const,
+            color: "from-indigo-500 to-blue-500",
+          },
+        ].map((stat) => {
           const Icon = stat.icon;
+          const isActive = statusFilter === stat.status;
           return (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700 hover:shadow-lg transition"
+            <button
+              key={stat.label}
+              onClick={() => setStatusFilter(stat.status)}
+              className={`rounded-2xl p-4 text-right transition border-2 ${
+                isActive
+                  ? "border-yellow-300 dark:border-yellow-500/40 bg-yellow-50 dark:bg-yellow-500/10"
+                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
+              }`}
             >
-              <div
-                className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-3 shadow-lg`}
-              >
-                <Icon className="w-6 h-6 text-white" />
+              <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center mb-2`}>
+                <Icon className="w-4 h-4 text-white" />
               </div>
-              <div className="text-3xl font-black text-slate-900 dark:text-white">
+              <div className="text-xl font-black text-slate-900 dark:text-white">
                 {stat.value}
               </div>
-              <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 {stat.label}
               </div>
-            </motion.div>
+            </button>
           );
         })}
       </div>
 
-      {/* الفلاتر */}
-      <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex flex-wrap gap-3">
-        <div className="relative flex-1 min-w-[200px]">
+      {/* Average Rating */}
+      {stats.approved > 0 && (
+        <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-500/10 dark:to-orange-500/5 rounded-2xl p-6 border-2 border-yellow-100 dark:border-yellow-500/20">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
+                <Star className="w-8 h-8 text-white fill-white" />
+              </div>
+              <div>
+                <div className="text-3xl font-black text-slate-900 dark:text-white">
+                  {stats.avgRating.toFixed(1)}
+                </div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">
+                  من {stats.approved} مراجعة معتمدة
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-1">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  className={`w-6 h-6 ${
+                    i < Math.round(stats.avgRating)
+                      ? "text-yellow-500 fill-yellow-500"
+                      : "text-slate-300 dark:text-slate-600"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Filters */}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-100 dark:border-slate-700">
+        <div className="relative">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="ابحث..."
+            placeholder="ابحث بالاسم أو الشركة..."
             className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pr-10 pl-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 dark:text-white"
           />
         </div>
-        <div className="flex gap-2">
-          {(["all", "pending", "approved"] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-4 py-2.5 rounded-xl text-sm font-bold transition ${
-                filter === f
-                  ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900"
-                  : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300"
-              }`}
-            >
-              {f === "all" ? "الكل" : f === "pending" ? "قيد المراجعة" : "المعتمدة"}
-            </button>
-          ))}
-        </div>
       </div>
 
-      {/* القائمة */}
-      <div className="grid gap-4">
-        {filtered.map((review) => (
-          <motion.div
-            key={review.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700"
-          >
-            <div className="flex items-start justify-between gap-4 flex-wrap">
-              <div className="flex items-start gap-4 flex-1">
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center text-white font-black flex-shrink-0">
-                  {review.name[0]}
+      {/* Error */}
+      {error && (
+        <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-5 h-5" />
+            {error}
+          </div>
+          <button onClick={fetchReviews} className="text-sm font-bold hover:underline">
+            إعادة المحاولة
+          </button>
+        </div>
+      )}
+
+      {/* Reviews List */}
+      {loading ? (
+        <div className="flex justify-center py-20">
+          <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-16 text-center border border-slate-100 dark:border-slate-700">
+          <Star className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
+          <p className="text-slate-500 dark:text-slate-400 text-lg font-bold">
+            {search || statusFilter !== "all" ? "لا توجد نتائج" : "لا توجد مراجعات بعد"}
+          </p>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-4">
+          <AnimatePresence>
+            {filtered.map((review) => (
+              <motion.div
+                key={review.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className={`bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 transition ${
+                  review.isApproved
+                    ? "border-green-100 dark:border-green-500/20"
+                    : "border-yellow-100 dark:border-yellow-500/20"
+                }`}
+              >
+                {/* Badges */}
+                <div className="flex items-center gap-2 mb-3 flex-wrap">
+                  {review.isApproved ? (
+                    <span className="text-xs bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 px-2 py-1 rounded-full font-bold flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" />
+                      معتمد
+                    </span>
+                  ) : (
+                    <span className="text-xs bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded-full font-bold flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      معلق
+                    </span>
+                  )}
+                  {review.isFeatured && (
+                    <span className="text-xs bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400 px-2 py-1 rounded-full font-bold flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" />
+                      مميز
+                    </span>
+                  )}
+                  {review.isVerified && (
+                    <span className="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-full font-bold flex items-center gap-1">
+                      <BadgeCheck className="w-3 h-3" />
+                      موثق
+                    </span>
+                  )}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-1 flex-wrap">
-                    <h3 className="font-bold text-slate-900 dark:text-white">
+
+                {/* Header */}
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white font-black text-lg flex-shrink-0">
+                    {review.name[0]}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-black text-slate-900 dark:text-white">
                       {review.name}
-                    </h3>
-                    <div className="flex items-center gap-0.5">
-                      {[...Array(5)].map((_, i) => (
+                    </div>
+                    {(review.company || review.position) && (
+                      <div className="text-xs text-slate-500 dark:text-slate-400">
+                        {review.position && `${review.position} — `}
+                        {review.company}
+                      </div>
+                    )}
+                    <div className="flex gap-1 mt-1">
+                      {Array.from({ length: 5 }).map((_, i) => (
                         <Star
                           key={i}
-                          className={`w-4 h-4 ${
+                          className={`w-3.5 h-3.5 ${
                             i < review.rating
                               ? "text-yellow-500 fill-yellow-500"
                               : "text-slate-300 dark:text-slate-600"
@@ -244,63 +398,79 @@ export default function ReviewsManager() {
                         />
                       ))}
                     </div>
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-                        review.approved
-                          ? "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400"
-                          : "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400"
-                      }`}
-                    >
-                      {review.approved ? "✅ معتمد" : "⏳ قيد المراجعة"}
-                    </span>
                   </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 mb-2">
-                    {review.service} • {review.createdAt}
-                  </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-300">
-                    {review.comment}
+                </div>
+
+                {/* Content */}
+                <div className="relative mb-4">
+                  <Quote className="absolute -top-1 -right-1 w-6 h-6 text-slate-200 dark:text-slate-700" />
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-3">
+                    {review.content}
                   </p>
                 </div>
-              </div>
 
-              <div className="flex gap-2">
-                {!review.approved && (
+                {/* Actions */}
+                <div className="flex items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-700 flex-wrap">
                   <button
-                    onClick={() => approve(review.id)}
-                    className="p-2 bg-green-50 dark:bg-green-500/20 hover:bg-green-100 text-green-600 rounded-lg transition"
-                    title="اعتماد"
+                    onClick={() => handleToggle(review.id, "isApproved", review.isApproved)}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                      review.isApproved
+                        ? "bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-200"
+                        : "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 hover:bg-green-200"
+                    }`}
                   >
-                    <Check className="w-4 h-4" />
+                    {review.isApproved ? (
+                      <>
+                        <XCircle className="w-3 h-3" />
+                        إلغاء الاعتماد
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="w-3 h-3" />
+                        اعتماد
+                      </>
+                    )}
                   </button>
-                )}
-                {review.approved && (
-                  <button
-                    onClick={() => reject(review.id)}
-                    className="p-2 bg-yellow-50 dark:bg-yellow-500/20 hover:bg-yellow-100 text-yellow-600 rounded-lg transition"
-                    title="إلغاء الاعتماد"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-                <button
-                  onClick={() => remove(review.id)}
-                  className="p-2 bg-red-50 dark:bg-red-500/20 hover:bg-red-100 text-red-600 rounded-lg transition"
-                  title="حذف"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        ))}
 
-        {filtered.length === 0 && (
-          <div className="text-center py-16 text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
-            <Star className="w-16 h-16 mx-auto mb-4 opacity-30" />
-            <p>لا توجد تقييمات مطابقة</p>
-          </div>
-        )}
-      </div>
+                  <button
+                    onClick={() => handleToggle(review.id, "isFeatured", review.isFeatured)}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                      review.isFeatured
+                        ? "bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400 hover:bg-purple-200"
+                        : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
+                    }`}
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    {review.isFeatured ? "إلغاء التمييز" : "تمييز"}
+                  </button>
+
+                  <button
+                    onClick={() => handleToggle(review.id, "isVerified", review.isVerified)}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                      review.isVerified
+                        ? "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 hover:bg-blue-200"
+                        : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
+                    }`}
+                  >
+                    <BadgeCheck className="w-3 h-3" />
+                    {review.isVerified ? "إلغاء التوثيق" : "توثيق"}
+                  </button>
+
+                  <div className="flex-1" />
+
+                  <button
+                    onClick={() => handleDelete(review.id)}
+                    className="p-2 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-600 rounded-lg transition"
+                    title="حذف"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 }
