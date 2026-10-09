@@ -1,12 +1,13 @@
-{
+﻿{
   "name": "codetech-website",
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "next dev",
     "dev-fast": "next dev --turbopack",
     "dev:clean": "rimraf .next && next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "db:push": "prisma db push",
