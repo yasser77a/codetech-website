@@ -1,67 +1,67 @@
+// ============================================
+// POST /api/auth/update-profile
+// تحديث بيانات المستخدم الحالي
+// ============================================
+
 import { NextResponse } from "next/server";
 import { getSession, createSession } from "@/lib/auth";
-import { users, type User } from "@/lib/users";
+import { prisma } from "@/lib/db";
 
 export async function POST(request: Request) {
-  const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
-  }
+  try {
+    // التحقق من الجلسة
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
+    }
 
-  const body = await request.json();
-  const { fullName, username, role } = body;
+    // قراءة البيانات
+    const body = await request.json();
+    const { fullName, email, avatar } = body;
 
-  const user = users.find((u: User) => u.id === session.userId);
-  if (!user) {
-    return NextResponse.json({ error: "المستخدم غير موجود" }, { status: 404 });
-  }
-
-  // ✅ التحقق من الدور
-  const isAdmin = user.role === "admin" || user.username === "yasser alashram";
-
-  if (!fullName || !fullName.trim()) {
-    return NextResponse.json({ error: "الاسم مطلوب" }, { status: 400 });
-  }
-
-  // ✅ تحديث الاسم للجميع
-  user.fullName = fullName.trim();
-
-  // ✅ تحديث اسم المستخدم والدور للأدمن فقط
-  if (isAdmin) {
-    if (username && username.trim()) {
-      const exists = users.find(
-        (u: User) =>
-          u.id !== user.id &&
-          u.username.toLowerCase() === username.toLowerCase().trim()
+    // التحقق
+    if (fullName !== undefined && (!fullName || fullName.trim().length < 3)) {
+      return NextResponse.json(
+        { error: "الاسم الكامل يجب أن يكون 3 أحرف على الأقل" },
+        { status: 400 }
       );
-      if (exists) {
-        return NextResponse.json(
-          { error: "اسم المستخدم مستخدم بالفعل" },
-          { status: 400 }
-        );
-      }
-      user.username = username.trim();
     }
-    if (role && ["admin", "editor", "viewer"].includes(role)) {
-      user.role = role;
-    }
+
+    // تحديث المستخدم
+    const updatedUser = await prisma.user.update({
+      where: { id: session.userId },
+      data: {
+        ...(fullName !== undefined && { fullName: fullName.trim() }),
+        ...(email !== undefined && { email: email?.trim() || null }),
+        ...(avatar !== undefined && { avatar: avatar || null }),
+      },
+      select: {
+        id: true,
+        username: true,
+        fullName: true,
+        email: true,
+        role: true,
+        avatar: true,
+      },
+    });
+
+    // تحديث الجلسة
+    await createSession({
+      userId: updatedUser.id,
+      username: updatedUser.username,
+      fullName: updatedUser.fullName,
+      role: updatedUser.role,
+    });
+
+    return NextResponse.json({
+      success: true,
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Update profile error:", error);
+    return NextResponse.json(
+      { error: "حدث خطأ في تحديث البيانات" },
+      { status: 500 }
+    );
   }
-
-  // ✅ تحديث الجلسة
-  await createSession({
-    userId: user.id,
-    username: user.username,
-    fullName: user.fullName,
-    role: user.role,
-  });
-
-  return NextResponse.json({
-    success: true,
-    user: {
-      id: user.id,
-      username: user.username,
-      fullName: user.fullName,
-      role: user.role,
-    },
-  });
 }
