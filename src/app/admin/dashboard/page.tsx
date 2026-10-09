@@ -24,16 +24,19 @@ interface RecentInquiry {
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [inquiries, setInquiries] = useState<RecentInquiry[]>([]);
+  const [user, setUser] = useState<{ fullName: string; role: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       fetch("/api/admin/stats").then((r) => r.json()),
       fetch("/api/admin/recent").then((r) => r.json()),
+      fetch("/api/auth/me").then((r) => r.json()),
     ])
-      .then(([statsData, recentData]) => {
+      .then(([statsData, recentData, meData]) => {
         if (statsData.stats) setStats(statsData.stats);
         if (recentData.inquiries) setInquiries(recentData.inquiries);
+        if (meData.user) setUser(meData.user);
       })
       .catch((err) => console.error("Dashboard fetch error:", err))
       .finally(() => setLoading(false));
@@ -95,32 +98,51 @@ export default function DashboardPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 rounded-3xl p-8 text-white relative overflow-hidden"
+        className="bg-gradient-to-br from-blue-50 via-indigo-50 to-cyan-50 dark:from-blue-600 dark:via-indigo-600 dark:to-cyan-600 rounded-3xl p-8 relative overflow-hidden border border-blue-100 dark:border-blue-500/30"
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-400/20 dark:bg-blue-300/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-400/20 dark:bg-cyan-300/20 rounded-full blur-3xl" />
         <div className="relative z-10">
-          <h1 className="text-3xl font-black mb-2">مرحباً بك 👋</h1>
-          <p className="text-slate-300">
+          <h1 className="text-3xl font-black mb-2 text-slate-900 dark:text-white">
+            مرحباً بك، {user?.fullName || "ياسر"} 👋
+          </h1>
+          <p className="text-slate-600 dark:text-blue-100">
             إليك نظرة سريعة على أداء Code Tech اليوم
           </p>
 
           {/* شريط الإحصائيات السريعة */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-            <div className="bg-white/10 backdrop-blur rounded-xl p-3">
-              <div className="text-2xl font-black">{stats.projects.total}</div>
-              <div className="text-xs text-slate-300">إجمالي المشاريع</div>
+            <div className="bg-white/70 dark:bg-white/10 backdrop-blur rounded-xl p-3 border border-white/50 dark:border-white/20">
+              <div className="text-2xl font-black text-slate-900 dark:text-white">
+                {stats.projects.total}
+              </div>
+              <div className="text-xs text-slate-600 dark:text-blue-100">
+                إجمالي المشاريع
+              </div>
             </div>
-            <div className="bg-white/10 backdrop-blur rounded-xl p-3">
-              <div className="text-2xl font-black">{stats.inquiries.new}</div>
-              <div className="text-xs text-slate-300">استفسارات جديدة</div>
+            <div className="bg-white/70 dark:bg-white/10 backdrop-blur rounded-xl p-3 border border-white/50 dark:border-white/20">
+              <div className="text-2xl font-black text-slate-900 dark:text-white">
+                {stats.inquiries.new}
+              </div>
+              <div className="text-xs text-slate-600 dark:text-blue-100">
+                استفسارات جديدة
+              </div>
             </div>
-            <div className="bg-white/10 backdrop-blur rounded-xl p-3">
-              <div className="text-2xl font-black">{stats.reviews.total}</div>
-              <div className="text-xs text-slate-300">المراجعات</div>
+            <div className="bg-white/70 dark:bg-white/10 backdrop-blur rounded-xl p-3 border border-white/50 dark:border-white/20">
+              <div className="text-2xl font-black text-slate-900 dark:text-white">
+                {stats.reviews.total}
+              </div>
+              <div className="text-xs text-slate-600 dark:text-blue-100">
+                المراجعات
+              </div>
             </div>
-            <div className="bg-white/10 backdrop-blur rounded-xl p-3">
-              <div className="text-2xl font-black">{stats.users.total}</div>
-              <div className="text-xs text-slate-300">المستخدمون</div>
+            <div className="bg-white/70 dark:bg-white/10 backdrop-blur rounded-xl p-3 border border-white/50 dark:border-white/20">
+              <div className="text-2xl font-black text-slate-900 dark:text-white">
+                {stats.users.total}
+              </div>
+              <div className="text-xs text-slate-600 dark:text-blue-100">
+                المستخدمون
+              </div>
             </div>
           </div>
         </div>
