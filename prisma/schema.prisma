@@ -14,7 +14,7 @@ datasource db {
 }
 
 // ============================================
-// 1. Users - ط§ظ„ظ…ط³طھط®ط¯ظ…ظˆظ†
+// 1. Users - المستخدمون (الأدمن)
 // ============================================
 model User {
   id           String   @id @default(cuid())
@@ -33,6 +33,7 @@ model User {
   blogPosts    BlogPost[]
   inquiries    Inquiry[]     @relation("AssignedInquiries")
   reviews      Review[]      @relation("ReviewAuthor")
+  adminReplies Comment[]     @relation("AdminReplies")
 
   @@map("users")
 }
@@ -44,7 +45,104 @@ enum Role {
 }
 
 // ============================================
-// 2. Projects - ط§ظ„ظ…ط´ط§ط±ظٹط¹
+// 2. VisitorAccount - حسابات الزوار
+// ============================================
+model VisitorAccount {
+  id             String   @id @default(cuid())
+  fullName       String
+  email          String   @unique
+  phone          String?
+  password       String   // bcrypt hash
+  emailVerified  Boolean  @default(false)
+  isActive       Boolean  @default(true)
+  isBanned       Boolean  @default(false)
+  banReason      String?
+  banExpiresAt   DateTime?
+  avatar         String?
+  lastLoginAt    DateTime?
+  loginCount     Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt @default(now())
+
+  comments       Comment[]
+  likes          Like[]
+  inquiries      Inquiry[]
+  otpCodes       OtpCode[]
+  sessions       VisitorSession[]
+  pageVisits     PageVisit[]
+
+  @@index([email])
+  @@map("visitor_accounts")
+}
+
+// ============================================
+// 3. OtpCode - رموز التحقق (OTP)
+// ============================================
+model OtpCode {
+  id          String   @id @default(cuid())
+  email       String
+  code        String   // 6 أرقام
+  type        String   // "EMAIL_VERIFY" | "PASSWORD_RESET" | "LOGIN"
+  expiresAt   DateTime
+  usedAt      DateTime?
+  attempts    Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  visitorId   String?
+  visitor     VisitorAccount? @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+
+  @@index([email, type, expiresAt])
+  @@index([code])
+  @@map("otp_codes")
+}
+
+// ============================================
+// 4. VisitorSession - جلسات الزوار
+// ============================================
+model VisitorSession {
+  id           String   @id @default(cuid())
+  token        String   @unique
+  visitorId    String
+  visitor      VisitorAccount @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  ipAddress    String?
+  userAgent    String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@index([token, expiresAt])
+  @@index([visitorId])
+  @@map("visitor_sessions")
+}
+
+// ============================================
+// 5. PageVisit - تتبع الزيارات
+// ============================================
+model PageVisit {
+  id          String   @id @default(cuid())
+  path        String
+  visitorId   String?  // UUID من Cookie
+  userId      String?  // إذا سجل دخول
+  user        VisitorAccount? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  ipAddress   String?
+  userAgent   String?
+  country     String?
+  city        String?
+  referrer    String?
+  device      String?  // "mobile" | "desktop" | "tablet"
+  browser     String?
+  os          String?
+  sessionId   String?  // جلسة التصفح
+  duration    Int?     // بالثواني
+  createdAt   DateTime @default(now())
+
+  @@index([path, createdAt])
+  @@index([visitorId, createdAt])
+  @@index([createdAt])
+  @@map("page_visits")
+}
+
+// ============================================
+// 6. Projects - المشاريع
 // ============================================
 model Project {
   id           String          @id @default(cuid())
@@ -63,9 +161,12 @@ model Project {
   featured     Boolean         @default(false)
   order        Int             @default(0)
   views        Int             @default(0)
+  likesCount   Int             @default(0)
   completedAt  DateTime?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt @default(now())
+
+  comments     Comment[]
 
   @@index([category, status])
   @@map("projects")
@@ -85,7 +186,7 @@ enum PublishStatus {
 }
 
 // ============================================
-// 3. Services - ط§ظ„ط®ط¯ظ…ط§طھ
+// 7. Services - الخدمات
 // ============================================
 model Service {
   id          String   @id @default(cuid())
@@ -97,6 +198,7 @@ model Service {
   features    String[]
   order       Int      @default(0)
   isActive    Boolean  @default(true)
+  likesCount  Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt @default(now())
 
@@ -104,7 +206,7 @@ model Service {
 }
 
 // ============================================
-// 4. BlogPosts - ط§ظ„ظ…ظ†ط´ظˆط±ط§طھ
+// 8. BlogPosts - المنشورات
 // ============================================
 model BlogPost {
   id          String        @id @default(cuid())
@@ -117,6 +219,7 @@ model BlogPost {
   tags        String[]
   status      PublishStatus @default(DRAFT)
   views       Int           @default(0)
+  likesCount  Int           @default(0)
   publishedAt DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt @default(now())
@@ -130,19 +233,48 @@ model BlogPost {
 }
 
 // ============================================
-// 5. Comments - ط§ظ„طھط¹ظ„ظٹظ‚ط§طھ
+// 9. Comments - التعليقات (محدّث)
 // ============================================
 model Comment {
-  id        String         @id @default(cuid())
-  name      String
-  email     String
-  content   String         @db.Text
-  status    CommentStatus  @default(PENDING)
-  postId    String
-  post      BlogPost       @relation(fields: [postId], references: [id], onDelete: Cascade)
-  createdAt DateTime       @default(now())
+  id            String         @id @default(cuid())
+  name          String
+  email         String
+  content       String         @db.Text
+  status        CommentStatus  @default(PENDING)
 
-  @@index([postId, status])
+  // نوع التعليق + الهدف
+  targetType    String         // "GENERAL" | "PROJECT" | "BLOG_POST" | "SERVICE"
+  targetId      String?
+
+  // العلاقة مع الزائر (اختياري - قد يكون ضيفاً)
+  visitorId     String?
+  visitor       VisitorAccount? @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+
+  // العلاقة مع المشروع (إن كان التعليق على مشروع)
+  projectId     String?
+  project       Project?        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // العلاقة مع المنشور (إن كان التعليق على منشور)
+  blogPostId    String?
+  blogPost      BlogPost?       @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+
+  // رد الأدمن
+  adminReply    String?         @db.Text
+  repliedAt     DateTime?
+  repliedById   String?
+  repliedBy     User?           @relation("AdminReplies", fields: [repliedById], references: [id], onDelete: SetNull)
+
+  // التعليقات المتفرعة (ردود على ردود)
+  parentId      String?
+  parent        Comment?        @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies       Comment[]       @relation("CommentReplies")
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt @default(now())
+
+  @@index([targetType, targetId, status])
+  @@index([visitorId])
+  @@index([status, createdAt])
   @@map("comments")
 }
 
@@ -150,10 +282,30 @@ enum CommentStatus {
   PENDING
   APPROVED
   REJECTED
+  SPAM
 }
 
 // ============================================
-// 6. Reviews - ط§ظ„ظ…ط±ط§ط¬ط¹ط§طھ
+// 10. Like - الإعجابات
+// ============================================
+model Like {
+  id          String   @id @default(cuid())
+  visitorId   String?  // UUID من Cookie (للزوار غير المسجلين)
+  userId      String?  // إذا سجل الزائر دخوله
+  user        VisitorAccount? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  targetType  String   // "PROJECT" | "BLOG_POST" | "SERVICE"
+  targetId    String   // ID المشروع/المنشور
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  @@unique([visitorId, targetType, targetId])
+  @@unique([userId, targetType, targetId])
+  @@index([targetType, targetId])
+  @@map("likes")
+}
+
+// ============================================
+// 11. Reviews - المراجعات
 // ============================================
 model Review {
   id         String   @id @default(cuid())
@@ -166,6 +318,8 @@ model Review {
   avatar     String?
   isApproved Boolean  @default(false)
   isFeatured Boolean  @default(false)
+  isVerified Boolean  @default(false)  // ✨ جديد: عميل موثق
+  orderId    String?  // ✨ جديد: مرجع للطلب
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt @default(now())
 
@@ -176,26 +330,32 @@ model Review {
 }
 
 // ============================================
-// 7. Inquiries - ط§ظ„ط§ط³طھظپط³ط§ط±ط§طھ
+// 12. Inquiries - الاستفسارات
 // ============================================
 model Inquiry {
-  id          String         @id @default(cuid())
-  name        String
-  email       String
-  phone       String?
-  subject     String?
-  message     String         @db.Text
-  serviceType String?
-  budget      String?
-  status      InquiryStatus  @default(NEW)
-  notes       String?        @db.Text
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt @default(now())
+  id           String         @id @default(cuid())
+  name         String
+  email        String
+  phone        String?
+  subject      String?
+  message      String         @db.Text
+  serviceType  String?
+  budget       String?
+  status       InquiryStatus  @default(NEW)
+  notes        String?        @db.Text
+
+  // ✨ جديد: ربط بحساب الزائر
+  visitorId    String?
+  visitor      VisitorAccount? @relation(fields: [visitorId], references: [id], onDelete: SetNull)
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt @default(now())
 
   assignedToId String?
-  assignedTo   User?         @relation("AssignedInquiries", fields: [assignedToId], references: [id], onDelete: SetNull)
+  assignedTo   User?          @relation("AssignedInquiries", fields: [assignedToId], references: [id], onDelete: SetNull)
 
   @@index([status, createdAt])
+  @@index([visitorId])
   @@map("inquiries")
 }
 
@@ -208,7 +368,7 @@ enum InquiryStatus {
 }
 
 // ============================================
-// 8. Notifications - ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ
+// 13. Notifications - الإشعارات (للأدمن)
 // ============================================
 model Notification {
   id        String   @id @default(cuid())
@@ -224,7 +384,47 @@ model Notification {
 }
 
 // ============================================
-// 9. SiteSettings - ط¥ط¹ط¯ط§ط¯ط§طھ ط§ظ„ظ…ظˆظ‚ط¹
+// 14. AdminNotification - إشعارات بريدية للأدمن
+// ============================================
+model AdminNotification {
+  id            String   @id @default(cuid())
+  subject       String
+  content       String   @db.Text
+  emailTo       String
+  emailSent     Boolean  @default(false)
+  emailSentAt   DateTime?
+  emailError    String?  @db.Text
+  eventType     String   // "NEW_INQUIRY" | "NEW_COMMENT" | "NEW_VISITOR" | "SPAM_ALERT"
+  eventId       String?  // ID الكيان المرتبط
+  metadata      String?  @db.Text  // JSON
+  createdAt     DateTime @default(now())
+
+  @@index([eventType, createdAt])
+  @@index([emailSent])
+  @@map("admin_notifications")
+}
+
+// ============================================
+// 15. BannedIp - عناوين IP المحظورة
+// ============================================
+model BannedIp {
+  id          String   @id @default(cuid())
+  ipAddress   String   @unique
+  reason      String   @db.Text
+  bannedBy    String?  // userId للأدمن
+  bannedAt    DateTime @default(now())
+  expiresAt   DateTime?  // null = دائم
+  isPermanent Boolean  @default(false)
+  hitCount    Int      @default(0)  // عدد المرات التي حاول فيها الدخول
+  lastHitAt   DateTime?
+
+  @@index([ipAddress])
+  @@index([expiresAt])
+  @@map("banned_ips")
+}
+
+// ============================================
+// 16. SiteSettings - إعدادات الموقع
 // ============================================
 model SiteSetting {
   id        String   @id @default(cuid())
@@ -237,7 +437,7 @@ model SiteSetting {
 }
 
 // ============================================
-// 10. ActivityLog - ط³ط¬ظ„ ط§ظ„ظ†ط´ط§ط·
+// 17. ActivityLog - سجل النشاط
 // ============================================
 model ActivityLog {
   id         String   @id @default(cuid())

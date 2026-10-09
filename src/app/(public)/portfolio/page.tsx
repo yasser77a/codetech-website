@@ -11,7 +11,9 @@ import {
 
 export const revalidate = 60;
 
-export const metadata = {
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
   title: "معرض أعمالنا",
   description:
     "اكتشف مشاريع Code Tech المتنوعة في مواقع الويب، التطبيقات، الأنظمة، ومشاريع التخرج.",
