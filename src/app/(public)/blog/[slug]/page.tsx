@@ -4,12 +4,10 @@ import Link from "next/link";
 import {
   ArrowLeft,
   Calendar,
-  User,
   Eye,
   Tag,
   Clock,
   ArrowRight,
-  Share2,
 } from "lucide-react";
 import { prisma } from "@/lib/db";
 import CommentSection from "@/components/portfolio/CommentSection";
@@ -52,7 +50,7 @@ export async function generateMetadata({
 }
 
 // ==========================================
-// Reading Time Calculator
+// Reading Time
 // ==========================================
 function calculateReadingTime(content: string): number {
   const wordsPerMinute = 200;
@@ -92,7 +90,6 @@ export default async function BlogPostPage({ params }: PageProps) {
     where: {
       status: "PUBLISHED",
       id: { not: post.id },
-      ...(post.category ? { category: post.category } : {}),
     },
     take: 3,
     orderBy: { views: "desc" },
@@ -119,10 +116,10 @@ export default async function BlogPostPage({ params }: PageProps) {
       {/* ============================================ */}
       {/* 1. Back Button */}
       {/* ============================================ */}
-      <div className="container mx-auto px-4 pt-6">
+      <div className="container mx-auto px-4 pt-24 md:pt-28 pb-2 relative z-10">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold text-sm transition-colors"
+          className="inline-flex items-center gap-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2.5 rounded-xl font-bold text-sm transition-all hover:scale-105 shadow-md border-2 border-slate-200 dark:border-slate-700"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>العودة للمدونة</span>
@@ -130,9 +127,9 @@ export default async function BlogPostPage({ params }: PageProps) {
       </div>
 
       {/* ============================================ */}
-      {/* 2. Hero */}
+      {/* 2. Header */}
       {/* ============================================ */}
-      <section className="container mx-auto px-4 py-8">
+      <section className="container mx-auto px-4 py-6">
         <div className="max-w-3xl mx-auto">
           {/* Category Badge */}
           {post.category && (
@@ -156,9 +153,8 @@ export default async function BlogPostPage({ params }: PageProps) {
             </p>
           )}
 
-          {/* Meta Bar */}
+          {/* Meta */}
           <div className="flex flex-wrap items-center gap-4 pb-6 border-b-2 border-slate-200 dark:border-slate-700">
-            {/* Author */}
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center text-white font-black text-sm">
                 {post.author?.fullName?.[0] || "C"}
@@ -175,19 +171,16 @@ export default async function BlogPostPage({ params }: PageProps) {
 
             <div className="w-px h-8 bg-slate-200 dark:bg-slate-700" />
 
-            {/* Date */}
             <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400">
               <Calendar className="w-4 h-4" />
               <span>{publishedDate}</span>
             </div>
 
-            {/* Reading Time */}
             <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400">
               <Clock className="w-4 h-4" />
               <span>{readingTime} دقيقة قراءة</span>
             </div>
 
-            {/* Views */}
             <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400">
               <Eye className="w-4 h-4" />
               <span>{post.views + 1} مشاهدة</span>
@@ -219,7 +212,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <article className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           <div className="bg-white dark:bg-[#12121a] rounded-2xl p-6 md:p-10 border-2 border-slate-100 dark:border-white/10">
-            <div className="prose prose-lg max-w-none text-slate-700 dark:text-slate-300 leading-loose whitespace-pre-wrap text-base md:text-lg">
+            <div className="text-slate-700 dark:text-slate-300 leading-loose whitespace-pre-wrap text-base md:text-lg">
               {post.content}
             </div>
 
@@ -244,9 +237,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             )}
           </div>
 
-          {/* ============================================ */}
-          {/* 5. Actions (Like + Share) */}
-          {/* ============================================ */}
+          {/* Actions */}
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4 bg-white dark:bg-[#12121a] rounded-2xl p-5 border-2 border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-2">
               <LikeButton
@@ -273,7 +264,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       </article>
 
       {/* ============================================ */}
-      {/* 6. Comments */}
+      {/* 5. Comments */}
       {/* ============================================ */}
       <div id="comments">
         <CommentSection
@@ -284,7 +275,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       </div>
 
       {/* ============================================ */}
-      {/* 7. Related Posts */}
+      {/* 6. Related Posts */}
       {/* ============================================ */}
       {relatedPosts.length > 0 && (
         <section className="py-12 bg-white dark:bg-[#0d0d14] transition-colors">
@@ -330,7 +321,6 @@ export default async function BlogPostPage({ params }: PageProps) {
               ))}
             </div>
 
-            {/* View All */}
             <div className="text-center mt-8">
               <Link
                 href="/blog"
