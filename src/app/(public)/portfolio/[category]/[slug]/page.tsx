@@ -178,10 +178,10 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {/* ============================================ */}
       {/* 1. Back Button */}
       {/* ============================================ */}
-      <div className="container mx-auto px-4 pt-6">
+      <div className="container mx-auto px-4 pt-32 md:pt-40 pb-4 relative z-10">
         <Link
           href={`/portfolio/${category}`}
-          className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold text-sm transition-colors"
+          className="inline-flex items-center gap-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2.5 rounded-xl font-bold text-sm transition-all hover:scale-105 shadow-md border-2 border-slate-200 dark:border-slate-700"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{categoryInfo.backText}</span>
