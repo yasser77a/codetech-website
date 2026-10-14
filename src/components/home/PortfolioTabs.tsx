@@ -152,6 +152,7 @@ export default function PortfolioTabs({ projects }: PortfolioTabsProps) {
                   slug={project.slug}
                   title={project.title}
                   description={project.description}
+                  category={project.category}
                   client={project.client}
                   technologies={project.technologies}
                   coverImage={project.coverImage}
