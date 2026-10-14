@@ -26,7 +26,7 @@
   --color-light: #F8FAFC;
   --color-gray:  #6C757D;
 
-  --font-sans: 'Cairo', 'Tajawal', system-ui, sans-serif;
+  --font-sans: var(--font-cairo), var(--font-tajawal), system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 

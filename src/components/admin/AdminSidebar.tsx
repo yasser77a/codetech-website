@@ -107,7 +107,7 @@ export default function AdminSidebar() {
     };
 
     fetchCounts();
-    const interval = setInterval(fetchCounts, 30000);
+    const interval = setInterval(fetchCounts, 60000);
     return () => clearInterval(interval);
   }, [pathname]);
 
@@ -292,6 +292,7 @@ export default function AdminSidebar() {
       {/* ============================================ */}
       <div className="p-3 border-t border-slate-200 dark:border-white/10">
         <button
+          suppressHydrationWarning
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 transition"
         >

@@ -2,10 +2,27 @@
 
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Globe, Smartphone, Monitor, GraduationCap, Search } from "lucide-react";
+import {
+  Globe,
+  Smartphone,
+  Monitor,
+  GraduationCap,
+  Palette,
+  Search,
+  Search as SearchIcon,
+} from "lucide-react";
 import ProjectCard from "./ProjectCard";
 
-type Category = "all" | "WEBSITES" | "APPS" | "SYSTEMS" | "GRADUATION";
+// ============================================
+// Types
+// ============================================
+type Category =
+  | "all"
+  | "WEBSITES"
+  | "APPS"
+  | "SYSTEMS"
+  | "GRADUATION"
+  | "GRAPHICS";
 
 interface Project {
   id: string;
@@ -18,6 +35,9 @@ interface Project {
   coverImage: string | null;
   featured: boolean;
   views: number;
+  likesCount?: number;
+  commentsCount?: number;
+  sharesCount?: number;
   createdAt: Date;
 }
 
@@ -27,19 +47,27 @@ interface PortfolioGridProps {
     apps: Project[];
     systems: Project[];
     graduation: Project[];
+    graphics?: Project[];
   };
   showFilter?: boolean;
   initialCategory?: Category;
 }
 
+// ============================================
+// Categories Config
+// ============================================
 const categories: { key: Category; label: string; icon: any }[] = [
   { key: "all", label: "الكل", icon: Globe },
   { key: "WEBSITES", label: "مواقع الويب", icon: Globe },
   { key: "APPS", label: "تطبيقات الجوال", icon: Smartphone },
   { key: "SYSTEMS", label: "الأنظمة", icon: Monitor },
   { key: "GRADUATION", label: "مشاريع التخرج", icon: GraduationCap },
+  { key: "GRAPHICS", label: "تصاميم جرافيكس", icon: Palette },
 ];
 
+// ============================================
+// Component
+// ============================================
 export default function PortfolioGrid({
   projects,
   showFilter = true,
@@ -55,22 +83,37 @@ export default function PortfolioGrid({
       ...projects.apps,
       ...projects.systems,
       ...projects.graduation,
+      ...(projects.graphics || []),
     ],
     [projects]
   );
 
   // Filter
   const filtered = useMemo(() => {
-    let result =
-      activeCategory === "all"
-        ? allProjects
-        : activeCategory === "WEBSITES"
-        ? projects.websites
-        : activeCategory === "APPS"
-        ? projects.apps
-        : activeCategory === "SYSTEMS"
-        ? projects.systems
-        : projects.graduation;
+    let result: Project[];
+
+    switch (activeCategory) {
+      case "all":
+        result = allProjects;
+        break;
+      case "WEBSITES":
+        result = projects.websites;
+        break;
+      case "APPS":
+        result = projects.apps;
+        break;
+      case "SYSTEMS":
+        result = projects.systems;
+        break;
+      case "GRADUATION":
+        result = projects.graduation;
+        break;
+      case "GRAPHICS":
+        result = projects.graphics || [];
+        break;
+      default:
+        result = allProjects;
+    }
 
     if (search.trim()) {
       const q = search.toLowerCase();
@@ -87,7 +130,7 @@ export default function PortfolioGrid({
   }, [activeCategory, search, projects, allProjects]);
 
   return (
-    <section className="py-16 bg-slate-50 dark:bg-slate-900">
+    <section className="py-16 bg-slate-50 dark:bg-[#0a0a0f] transition-colors duration-300">
       <div className="container mx-auto px-4">
         {showFilter && (
           <>
@@ -96,16 +139,14 @@ export default function PortfolioGrid({
               {categories.map((cat) => {
                 const Icon = cat.icon;
                 const isActive = activeCategory === cat.key;
-                const count =
-                  cat.key === "all"
-                    ? allProjects.length
-                    : cat.key === "WEBSITES"
-                    ? projects.websites.length
-                    : cat.key === "APPS"
-                    ? projects.apps.length
-                    : cat.key === "SYSTEMS"
-                    ? projects.systems.length
-                    : projects.graduation.length;
+
+                let count = 0;
+                if (cat.key === "all") count = allProjects.length;
+                else if (cat.key === "WEBSITES") count = projects.websites.length;
+                else if (cat.key === "APPS") count = projects.apps.length;
+                else if (cat.key === "SYSTEMS") count = projects.systems.length;
+                else if (cat.key === "GRADUATION") count = projects.graduation.length;
+                else if (cat.key === "GRAPHICS") count = (projects.graphics || []).length;
 
                 return (
                   <button
@@ -114,8 +155,8 @@ export default function PortfolioGrid({
                     suppressHydrationWarning
                     className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
                       isActive
-                        ? "bg-gradient-to-r from-brand-600 to-brand-500 text-white shadow-lg scale-105"
-                        : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105"
+                        : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border-2 border-slate-200 dark:border-slate-700"
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -137,14 +178,14 @@ export default function PortfolioGrid({
             {/* Search */}
             <div className="max-w-md mx-auto mb-10">
               <div className="relative">
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <SearchIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="ابحث في المشاريع..."
                   suppressHydrationWarning
-                  className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pr-11 pl-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                  className="w-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl pr-11 pl-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition"
                 />
               </div>
             </div>
@@ -168,11 +209,15 @@ export default function PortfolioGrid({
                   slug={project.slug}
                   title={project.title}
                   description={project.description}
+                  category={project.category}
                   client={project.client}
                   technologies={project.technologies}
                   coverImage={project.coverImage}
                   featured={project.featured}
                   views={project.views}
+                  likesCount={project.likesCount}
+                  commentsCount={project.commentsCount}
+                  sharesCount={project.sharesCount}
                   index={i}
                 />
               ))}

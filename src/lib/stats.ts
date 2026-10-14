@@ -1,39 +1,37 @@
 // ============================================
 // CodeTech Website - Stats Service
-// جلب الإحصائيات من قاعدة البيانات
+// جلب الإحصائيات من قاعدة البيانات (مع Cache)
 // ============================================
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "./db";
 
 // ============================================
 // Types
 // ============================================
 export interface DashboardStats {
-  // المشاريع
   projects: {
     total: number;
     websites: number;
     apps: number;
     systems: number;
     graduation: number;
+    graphics: number;
     published: number;
     draft: number;
     featured: number;
   };
-  // المنشورات
   posts: {
     total: number;
     published: number;
     draft: number;
   };
-  // المراجعات
   reviews: {
     total: number;
     approved: number;
     pending: number;
     averageRating: number;
   };
-  // الاستفسارات
   inquiries: {
     total: number;
     new: number;
@@ -41,17 +39,14 @@ export interface DashboardStats {
     replied: number;
     closed: number;
   };
-  // المستخدمون
   users: {
     total: number;
     admins: number;
     editors: number;
   };
-  // الإشعارات
   notifications: {
     unread: number;
   };
-  // الخدمات
   services: {
     total: number;
     active: number;
@@ -59,16 +54,16 @@ export interface DashboardStats {
 }
 
 // ============================================
-// الدالة الرئيسية - تجلب كل الإحصائيات دفعة واحدة
+// Internal: الفعلي للاستعلامات (بدون Cache)
 // ============================================
-export async function getDashboardStats(): Promise<DashboardStats> {
-  // تنفيذ كل الاستعلامات بالتوازي (أسرع 10 مرات من التسلسل)
+async function _getDashboardStats(): Promise<DashboardStats> {
   const [
     totalProjects,
     websitesCount,
     appsCount,
     systemsCount,
     graduationCount,
+    graphicsCount,
     publishedProjects,
     draftProjects,
     featuredProjects,
@@ -103,6 +98,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     prisma.project.count({ where: { category: "APPS" } }),
     prisma.project.count({ where: { category: "SYSTEMS" } }),
     prisma.project.count({ where: { category: "GRADUATION" } }),
+    prisma.project.count({ where: { category: "GRAPHICS" } }),
     prisma.project.count({ where: { status: "PUBLISHED" } }),
     prisma.project.count({ where: { status: "DRAFT" } }),
     prisma.project.count({ where: { featured: true } }),
@@ -148,6 +144,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       apps: appsCount,
       systems: systemsCount,
       graduation: graduationCount,
+      graphics: graphicsCount,
       published: publishedProjects,
       draft: draftProjects,
       featured: featuredProjects,
@@ -186,7 +183,19 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 }
 
 // ============================================
-// جلب الاستفسارات الأخيرة (للداشبورد)
+// Public: مع Cache لمدة 30 ثانية
+// ============================================
+export const getDashboardStats = unstable_cache(
+  _getDashboardStats,
+  ["dashboard-stats"],
+  {
+    revalidate: 30,
+    tags: ["stats", "projects", "inquiries", "reviews", "users"],
+  }
+);
+
+// ============================================
+// جلب الاستفسارات الأخيرة
 // ============================================
 export async function getRecentInquiries(limit = 4) {
   return await prisma.inquiry.findMany({
@@ -225,7 +234,7 @@ export async function getRecentActivity(limit = 10) {
 }
 
 // ============================================
-// جلب أفضل المشاريع (الأكثر مشاهدة)
+// أفضل المشاريع
 // ============================================
 export async function getTopProjects(limit = 5) {
   return await prisma.project.findMany({

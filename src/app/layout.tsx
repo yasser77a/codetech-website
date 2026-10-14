@@ -1,22 +1,52 @@
 import type { Metadata, Viewport } from "next";
-import { Cairo, Tajawal } from "next/font/google";
+import localFont from "next/font/local";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
-const cairo = Cairo({
-  subsets: ["arabic", "latin"],
+// ==========================================
+// 🎨 الخطوط المحلية
+// ==========================================
+const cairo = localFont({
+  src: [
+    {
+      path: "../../public/fonts/Cairo-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/Cairo-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/Cairo-Black.ttf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
   variable: "--font-cairo",
-  weight: ["400", "700", "900"],
   display: "swap",
   preload: true,
+  fallback: ["system-ui", "sans-serif"],
 });
 
-const tajawal = Tajawal({
-  subsets: ["arabic", "latin"],
+const tajawal = localFont({
+  src: [
+    {
+      path: "../../public/fonts/Tajawal-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/Tajawal-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-tajawal",
-  weight: ["400", "700"],
   display: "swap",
   preload: true,
+  fallback: ["system-ui", "sans-serif"],
 });
 
 const SITE_URL = "https://codetech-website-yasser-alashram.vercel.app";
@@ -26,16 +56,15 @@ const SITE_NAME = "Code Tech | كود تك";
 // 📊 Metadata الكاملة (SEO)
 // ==========================================
 export const metadata: Metadata = {
-  // 🔹 الأساسيات
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Code Tech | كود تك - فريق برمجي متخصص في صنعاء",
+    default:
+      "Code Tech | كود تك - فريق برمجي متخصص في صنعاء",
     template: "%s | Code Tech",
   },
   description:
     "Code Tech شركة يمنية متخصصة في تطوير المواقع والتطبيقات وأنظمة ERP للمخازن والموارد البشرية والمبيعات في صنعاء. أسعار مناسبة وتقسيط.",
 
-  // 🔹 الكلمات المفتاحية
   keywords: [
     "Code Tech",
     "كود تك",
@@ -53,14 +82,12 @@ export const metadata: Metadata = {
     "mobile apps yemen",
   ],
 
-  // 🔹 المؤلفون
   authors: [
     { name: "Yasser Alashram", url: "https://github.com/yasser77a" },
   ],
   creator: "Yasser Alashram",
   publisher: "Code Tech",
 
-  // 🔹 Canonical URL (يمنع المحتوى المكرر)
   alternates: {
     canonical: "/",
     languages: {
@@ -68,7 +95,6 @@ export const metadata: Metadata = {
     },
   },
 
-  // 🔹 Open Graph (للمشاركة على Facebook, WhatsApp, LinkedIn)
   openGraph: {
     type: "website",
     locale: "ar_YE",
@@ -87,17 +113,15 @@ export const metadata: Metadata = {
     ],
   },
 
-  // 🔹 Twitter Card
   twitter: {
     card: "summary_large_image",
     title: "Code Tech | كود تك",
     description:
-      "Code Tech شركة يمنية متخصصة في تطوير المواقع والتطبيقات وأنظمة ERP في صنعاء. أسعار مناسبة وتقسيط.",
+      "Code Tech شركة يمنية متخصصة في تطوير المواقع والتطبيقات وأنظمة ERP في صنعاء.",
     images: ["/opengraph-image.png"],
     creator: "@yasser77a",
   },
 
-  // 🔹 الأيقونات (Favicon كامل)
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -112,12 +136,10 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
   },
 
-  // 🔹 معلومات إضافية
   applicationName: "Code Tech",
   category: "technology",
   classification: "Software Development Company",
 
-  // 🔹 فهرسة Google
   robots: {
     index: true,
     follow: true,
@@ -131,12 +153,10 @@ export const metadata: Metadata = {
     },
   },
 
-  // 🔹 التحقق من الملكية (Google فقط، Bing في <head>)
   verification: {
     google: "IYLTbCGTvMLSwA8jS0DQJD5LbRhBLsv040liVGcO9j8",
   },
 
-  // 🔹 معلومات أخرى
   other: {
     "theme-color": "#0B3DA8",
     "msapplication-TileColor": "#0B3DA8",
@@ -222,13 +242,13 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" data-scroll-behavior="smooth">
       <head>
-        {/* ✅ Bing Verification */}
+        {/* Bing Verification */}
         <meta
           name="msvalidate.01"
           content="0CF94F97FEA4F36A2599FE6A20CFE431"
         />
 
-        {/* 🏢 Structured Data (JSON-LD) */}
+        {/* Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

@@ -1,12 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, Star, ArrowUpRight, TrendingUp } from "lucide-react";
+import {
+  Eye,
+  Star,
+  ArrowUpRight,
+  TrendingUp,
+  Heart,
+  MessageSquare,
+  Share2,
+  Palette,
+} from "lucide-react";
 import ImageLightbox from "@/components/ui/ImageLightbox";
 
+// ============================================
+// Types
+// ============================================
 interface Project {
   id: string;
   title: string;
@@ -18,6 +30,9 @@ interface Project {
   coverImage: string | null;
   featured: boolean;
   views: number;
+  likesCount?: number;
+  commentsCount?: number;
+  sharesCount?: number;
   createdAt: Date;
 }
 
@@ -28,13 +43,42 @@ interface BentoProjectCardProps {
 }
 
 // ============================================
-// Category Color Map
+// Category Color + Slug Map
 // ============================================
-const categoryColors: Record<string, { from: string; to: string; label: string }> = {
-  WEBSITES: { from: "from-blue-600", to: "to-cyan-600", label: "موقع" },
-  APPS: { from: "from-green-600", to: "to-emerald-600", label: "تطبيق" },
-  SYSTEMS: { from: "from-purple-600", to: "to-violet-600", label: "نظام" },
-  GRADUATION: { from: "from-orange-600", to: "to-red-600", label: "تخرج" },
+const categoryInfo: Record<
+  string,
+  { from: string; to: string; label: string; slug: string }
+> = {
+  WEBSITES: {
+    from: "from-blue-600",
+    to: "to-cyan-600",
+    label: "موقع",
+    slug: "websites",
+  },
+  APPS: {
+    from: "from-green-600",
+    to: "to-emerald-600",
+    label: "تطبيق",
+    slug: "apps",
+  },
+  SYSTEMS: {
+    from: "from-purple-600",
+    to: "to-violet-600",
+    label: "نظام",
+    slug: "systems",
+  },
+  GRADUATION: {
+    from: "from-orange-600",
+    to: "to-red-600",
+    label: "تخرج",
+    slug: "graduation",
+  },
+  GRAPHICS: {
+    from: "from-pink-600",
+    to: "to-rose-600",
+    label: "تصميم",
+    slug: "graphics",
+  },
 };
 
 // ============================================
@@ -52,7 +96,35 @@ export default function BentoProjectCard({
   size,
 }: BentoProjectCardProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const category = categoryColors[project.category] || categoryColors.WEBSITES;
+  const [stats, setStats] = useState({
+    likesCount: project.likesCount || 0,
+    commentsCount: project.commentsCount || 0,
+    sharesCount: project.sharesCount || 0,
+  });
+
+  const category = categoryInfo[project.category] || categoryInfo.WEBSITES;
+
+  // ✅ جلب الإحصائيات المحدّثة
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/public/projects/stats?id=${project.id}&type=PROJECT`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (!cancelled && data.likesCount !== undefined) {
+          setStats({
+            likesCount: data.likesCount || 0,
+            commentsCount: data.commentsCount || 0,
+            sharesCount: data.sharesCount || 0,
+          });
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [project.id]);
+
+  const detailUrl = `/portfolio/${category.slug}/${project.slug}`;
 
   return (
     <>
@@ -61,28 +133,26 @@ export default function BentoProjectCard({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: Math.min(index * 0.05, 0.4), duration: 0.5 }}
-        className={`relative group ${sizeStyles[size]} overflow-hidden rounded-3xl bg-slate-900 cursor-pointer`}
+        className={`relative group ${sizeStyles[size]} overflow-hidden rounded-3xl bg-slate-900`}
       >
         {/* ============================================ */}
         {/* Background Image */}
         {/* ============================================ */}
         {project.coverImage ? (
-          <>
-            <Image
-              src={project.coverImage}
-              alt={project.title}
-              fill
-              unoptimized
-              sizes={
-                size === "big"
-                  ? "(max-width: 768px) 100vw, 66vw"
-                  : size === "tall"
-                  ? "(max-width: 768px) 100vw, 33vw"
-                  : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              }
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-          </>
+          <Image
+            src={project.coverImage}
+            alt={project.title}
+            fill
+            unoptimized
+            sizes={
+              size === "big"
+                ? "(max-width: 768px) 100vw, 66vw"
+                : size === "tall"
+                ? "(max-width: 768px) 100vw, 33vw"
+                : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            }
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+          />
         ) : (
           <div
             className={`absolute inset-0 bg-gradient-to-br ${category.from} ${category.to}`}
@@ -96,7 +166,7 @@ export default function BentoProjectCard({
         )}
 
         {/* ============================================ */}
-        {/* Gradient Overlay (always) */}
+        {/* Gradient Overlay */}
         {/* ============================================ */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
 
@@ -124,7 +194,7 @@ export default function BentoProjectCard({
         </div>
 
         {/* ============================================ */}
-        {/* Category Badge (top-left) */}
+        {/* Category Badge */}
         {/* ============================================ */}
         <div className="absolute top-4 left-4 z-10">
           <span className="inline-flex items-center gap-1.5 bg-black/40 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-full font-bold border border-white/20">
@@ -134,7 +204,7 @@ export default function BentoProjectCard({
         </div>
 
         {/* ============================================ */}
-        {/* Content (always visible at bottom) */}
+        {/* Content */}
         {/* ============================================ */}
         <div className="absolute inset-x-0 bottom-0 p-5 lg:p-6 z-10">
           {/* Title */}
@@ -150,7 +220,7 @@ export default function BentoProjectCard({
             {project.title}
           </h3>
 
-          {/* Description (only on big or hover) */}
+          {/* Description */}
           <p
             className={`text-slate-300 text-sm mb-3 line-clamp-2 transition-all duration-500 ${
               size === "big"
@@ -162,15 +232,17 @@ export default function BentoProjectCard({
           </p>
 
           {/* Technologies */}
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            {project.technologies.slice(0, size === "big" ? 5 : 3).map((tech, i) => (
-              <span
-                key={i}
-                className="text-xs bg-white/10 backdrop-blur-md text-white px-2.5 py-1 rounded-lg font-bold border border-white/20"
-              >
-                {tech}
-              </span>
-            ))}
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {project.technologies
+              .slice(0, size === "big" ? 5 : 3)
+              .map((tech, i) => (
+                <span
+                  key={i}
+                  className="text-xs bg-white/10 backdrop-blur-md text-white px-2.5 py-1 rounded-lg font-bold border border-white/20"
+                >
+                  {tech}
+                </span>
+              ))}
             {project.technologies.length > (size === "big" ? 5 : 3) && (
               <span className="text-xs bg-white/10 backdrop-blur-md text-white px-2.5 py-1 rounded-lg font-bold border border-white/20">
                 +{project.technologies.length - (size === "big" ? 5 : 3)}
@@ -178,39 +250,59 @@ export default function BentoProjectCard({
             )}
           </div>
 
-          {/* Footer Info + Action */}
-          <div className="flex items-center justify-between pt-3 border-t border-white/10">
-            {/* Views */}
-            <div className="flex items-center gap-1.5 text-xs text-slate-300">
-              <Eye className="w-3.5 h-3.5" />
+          {/* ============================================ */}
+          {/* Stats Bar: Likes, Comments, Shares, Views */}
+          {/* ============================================ */}
+          <div className="flex items-center gap-3 mb-3 text-xs text-slate-300">
+            <div className="flex items-center gap-1">
+              <Heart className="w-3.5 h-3.5 text-red-400" />
+              <span className="font-bold">{stats.likesCount}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <MessageSquare className="w-3.5 h-3.5 text-blue-400" />
+              <span className="font-bold">{stats.commentsCount}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Share2 className="w-3.5 h-3.5 text-green-400" />
+              <span className="font-bold">{stats.sharesCount}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Eye className="w-3.5 h-3.5 text-slate-400" />
               <span className="font-bold">
                 {project.views.toLocaleString("en-US")}
               </span>
-              <span className="text-slate-500">مشاهدة</span>
             </div>
+          </div>
 
-            {/* View Details Button */}
+          {/* ============================================ */}
+          {/* Actions: Details + Lightbox */}
+          {/* ============================================ */}
+          <div className="flex items-center gap-2 pt-3 border-t border-white/10">
+            {/* View Details */}
             <Link
-              href={`/portfolio/${project.slug}`}
-              className="flex items-center gap-1.5 text-xs font-bold text-white group-hover:text-blue-300 transition-colors"
+              href={detailUrl}
+              className={`flex-1 flex items-center justify-center gap-2 bg-gradient-to-r ${category.from} ${category.to} text-white font-bold text-sm py-2.5 px-4 rounded-xl transition-all hover:scale-[1.02] shadow-lg`}
               onClick={(e) => e.stopPropagation()}
             >
-              <span>التفاصيل</span>
-              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              <span>عرض التفاصيل</span>
+              <ArrowUpRight className="w-4 h-4" />
             </Link>
+
+            {/* Lightbox Button */}
+            {project.coverImage && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLightboxOpen(true);
+                }}
+                className="p-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-xl transition-all border border-white/20"
+                title="عرض الصورة"
+              >
+                <Eye className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
-
-        {/* ============================================ */}
-        {/* Whole Card Click → Lightbox */}
-        {/* ============================================ */}
-        {project.coverImage && (
-          <div
-            onClick={() => setLightboxOpen(true)}
-            className="absolute inset-0 z-[5]"
-            aria-label="فتح الصورة"
-          />
-        )}
       </motion.div>
 
       {/* Lightbox */}

@@ -17,10 +17,15 @@ export interface PublicProject {
   category: ProjectCategory;
   client: string | null;
   technologies: string[];
+  features: string[];
   coverImage: string | null;
+  gallery: string[];
   status: string;
   featured: boolean;
   views: number;
+  likesCount: number; 
+  commentsCount: number;
+  sharesCount: number;
   createdAt: Date;
 }
 
@@ -57,10 +62,15 @@ export async function getPublicProjects(options?: {
         category: true,
         client: true,
         technologies: true,
+        features: true,
         coverImage: true,
+        gallery: true,
         status: true,
         featured: true,
         views: true,
+        likesCount: true,
+        commentsCount: true,
+        sharesCount: true,
         createdAt: true,
       },
     });

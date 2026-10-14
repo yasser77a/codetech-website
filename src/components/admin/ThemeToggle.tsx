@@ -9,9 +9,11 @@ export default function ThemeToggle() {
 
   return (
     <button
+      suppressHydrationWarning
       onClick={toggleTheme}
-      className="relative p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl transition border border-slate-200"
+      className="relative p-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition border border-slate-200 dark:border-slate-700"
       aria-label="تبديل الوضع"
+      type="button"
     >
       <motion.div
         key={theme}
@@ -20,7 +22,7 @@ export default function ThemeToggle() {
         transition={{ duration: 0.3 }}
       >
         {theme === "light" ? (
-          <Moon className="w-5 h-5 text-slate-600" />
+          <Moon className="w-5 h-5 text-slate-600 dark:text-slate-300" />
         ) : (
           <Sun className="w-5 h-5 text-yellow-500" />
         )}

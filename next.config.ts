@@ -37,7 +37,7 @@ const nextConfig: NextConfig = {
   },
 
   // ✅ تفعيل Strict Mode
-  reactStrictMode: true,
+  reactStrictMode: false,
 
   // ✅ إخفاء الترويسة
   poweredByHeader: false,

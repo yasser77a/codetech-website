@@ -26,6 +26,7 @@ export async function GET(request: Request) {
         apps: "APPS",
         systems: "SYSTEMS",
         graduation: "GRADUATION",
+        graphics: "GRAPHICS",
       };
       where.category = categoryMap[category.toLowerCase()] || category.toUpperCase();
     }
@@ -45,6 +46,12 @@ export async function GET(request: Request) {
     const projects = await prisma.project.findMany({
       where,
       orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+      include: {
+        clients: {
+          where: { isActive: true },
+          orderBy: { order: "asc" },
+        },
+      },
     });
 
     return NextResponse.json({ projects });
@@ -62,16 +69,13 @@ export async function GET(request: Request) {
 // ============================================
 export async function POST(request: Request) {
   try {
-    // التحقق من الجلسة
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
 
-    // قراءة البيانات
     const body = await request.json();
 
-    // التحقق من المدخلات
     const validation = validateProject(body);
     if (!validation.valid) {
       return NextResponse.json(
@@ -80,7 +84,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // توليد slug فريد
     let slug = generateSlug(body.title);
     let counter = 1;
     while (await prisma.project.findUnique({ where: { slug } })) {
@@ -88,7 +91,6 @@ export async function POST(request: Request) {
       counter++;
     }
 
-    // إنشاء المشروع
     const project = await prisma.project.create({
       data: {
         title: body.title.trim(),
@@ -98,6 +100,7 @@ export async function POST(request: Request) {
         category: body.category,
         client: body.client?.trim() || null,
         technologies: Array.isArray(body.technologies) ? body.technologies : [],
+        features: Array.isArray(body.features) ? body.features : [],
         coverImage: body.coverImage || null,
         gallery: Array.isArray(body.gallery) ? body.gallery : [],
         liveUrl: body.liveUrl || null,
@@ -108,7 +111,6 @@ export async function POST(request: Request) {
       },
     });
 
-    // تسجيل النشاط
     await prisma.activityLog.create({
       data: {
         userId: session.userId,

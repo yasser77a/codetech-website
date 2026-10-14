@@ -1,7 +1,7 @@
 // ============================================
-// GET    /api/projects/[id]  - جلب مشروع واحد
-// PATCH  /api/projects/[id]  - تعديل مشروع
-// DELETE /api/projects/[id]  - حذف مشروع
+// GET    /api/projects/[id]  - جلب مشروع
+// PATCH  /api/projects/[id]  - تعديل
+// DELETE /api/projects/[id]  - حذف
 // ============================================
 
 import { NextResponse } from "next/server";
@@ -22,6 +22,11 @@ export async function GET(_request: Request, context: Context) {
 
     const project = await prisma.project.findUnique({
       where: { id },
+      include: {
+        clients: {
+          orderBy: { order: "asc" },
+        },
+      },
     });
 
     if (!project) {
@@ -53,7 +58,6 @@ export async function PATCH(request: Request, context: Context) {
 
     const { id } = await context.params;
 
-    // التحقق من وجود المشروع
     const existing = await prisma.project.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json(
@@ -64,7 +68,6 @@ export async function PATCH(request: Request, context: Context) {
 
     const body = await request.json();
 
-    // التحقق من المدخلات (لكن الحقول الاختيارية مسموحة)
     const validation = validateProject({
       title: body.title ?? existing.title,
       description: body.description ?? existing.description,
@@ -80,7 +83,6 @@ export async function PATCH(request: Request, context: Context) {
       );
     }
 
-    // تحديث المشروع
     const project = await prisma.project.update({
       where: { id },
       data: {
@@ -90,6 +92,7 @@ export async function PATCH(request: Request, context: Context) {
         ...(body.category !== undefined && { category: body.category }),
         ...(body.client !== undefined && { client: body.client?.trim() || null }),
         ...(body.technologies !== undefined && { technologies: body.technologies }),
+        ...(body.features !== undefined && { features: body.features }),
         ...(body.coverImage !== undefined && { coverImage: body.coverImage || null }),
         ...(body.gallery !== undefined && { gallery: body.gallery }),
         ...(body.liveUrl !== undefined && { liveUrl: body.liveUrl || null }),
@@ -98,9 +101,13 @@ export async function PATCH(request: Request, context: Context) {
         ...(body.featured !== undefined && { featured: body.featured === true }),
         ...(body.order !== undefined && { order: body.order }),
       },
+      include: {
+        clients: {
+          orderBy: { order: "asc" },
+        },
+      },
     });
 
-    // تسجيل النشاط
     await prisma.activityLog.create({
       data: {
         userId: session.userId,

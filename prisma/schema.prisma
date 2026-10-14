@@ -145,29 +145,31 @@ model PageVisit {
 // 6. Projects - المشاريع
 // ============================================
 model Project {
-  id           String          @id @default(cuid())
-  title        String
-  slug         String          @unique
-  description  String          @db.Text
-  content      String?         @db.Text
-  category     ProjectCategory
-  client       String?
-  technologies String[]
-  coverImage   String?
-  gallery      String[]
-  liveUrl      String?
-  githubUrl    String?
-  status       PublishStatus   @default(DRAFT)
-  featured     Boolean         @default(false)
-  order        Int             @default(0)
-  views        Int             @default(0)
-  likesCount   Int             @default(0)
-  completedAt  DateTime?
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt @default(now())
-
+  id            String          @id @default(cuid())
+  title         String
+  slug          String          @unique
+  description   String          @db.Text
+  content       String?         @db.Text
+  category      ProjectCategory
+  client        String?
+  technologies  String[]
+  features      String[]  
+  coverImage    String?
+  gallery       String[]   
+  liveUrl       String?
+  githubUrl     String?
+  status        PublishStatus   @default(DRAFT)
+  featured      Boolean         @default(false)
+  order         Int             @default(0)
+  views         Int             @default(0)
+  likesCount    Int             @default(0)
+  commentsCount Int             @default(0) 
+  sharesCount   Int             @default(0) 
+  completedAt   DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt @default(now())
   comments     Comment[]
-
+  clients      ProjectClient[] 
   @@index([category, status])
   @@map("projects")
 }
@@ -177,6 +179,7 @@ enum ProjectCategory {
   APPS
   SYSTEMS
   GRADUATION
+  GRAPHICS
 }
 
 enum PublishStatus {
@@ -209,20 +212,22 @@ model Service {
 // 8. BlogPosts - المنشورات
 // ============================================
 model BlogPost {
-  id          String        @id @default(cuid())
-  title       String
-  slug        String        @unique
-  excerpt     String?       @db.Text
-  content     String        @db.Text
-  coverImage  String?
-  category    String?
-  tags        String[]
-  status      PublishStatus @default(DRAFT)
-  views       Int           @default(0)
-  likesCount  Int           @default(0)
-  publishedAt DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt @default(now())
+  id            String        @id @default(cuid())
+  title         String
+  slug          String        @unique
+  excerpt       String?       @db.Text
+  content       String        @db.Text
+  coverImage    String?
+  category      String?
+  tags          String[]
+  status        PublishStatus @default(DRAFT)
+  views         Int           @default(0)
+  likesCount    Int           @default(0)
+  commentsCount Int           @default(0) 
+  sharesCount   Int           @default(0) 
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt @default(now())
 
   authorId    String?
   author      User?         @relation(fields: [authorId], references: [id], onDelete: SetNull)
@@ -453,4 +458,29 @@ model ActivityLog {
 
   @@index([userId, createdAt])
   @@map("activity_logs")
+}
+
+// ============================================
+// 18. ProjectClient - عملاء المشروع (many-to-many)
+// ============================================
+model ProjectClient {
+  id           String   @id @default(cuid())
+  name         String                    // اسم العميل
+  company      String?                   // الشركة
+  logo         String?                   // شعار الشركة
+  industry     String?                   // القطاع
+  location     String?                   // الموقع
+  website      String?                   // الموقع الإلكتروني
+  usedSince    DateTime?                 // تاريخ الاستخدام
+  notes        String?  @db.Text         // ملاحظات
+  order        Int      @default(0)      // الترتيب
+  isActive     Boolean  @default(true)   // فعّال
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt @default(now())
+
+  projectId    String
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("project_clients")
 }

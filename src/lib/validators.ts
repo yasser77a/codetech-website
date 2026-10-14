@@ -51,13 +51,42 @@ export interface ValidationResult {
   // توليد slug من النص العربي/الإنجليزي
   // ============================================
   export function generateSlug(text: string): string {
-    return text
+    // ✅ خريطة تحويل الحروف العربية → إنجليزية
+    const arabicToLatin: Record<string, string> = {
+      ا: "a", أ: "a", إ: "e", آ: "a", ٱ: "a",
+      ب: "b", ت: "t", ث: "th", ج: "j", ح: "h", خ: "kh",
+      د: "d", ذ: "dh", ر: "r", ز: "z", س: "s", ش: "sh",
+      ص: "s", ض: "d", ط: "t", ظ: "z", ع: "a", غ: "gh",
+      ف: "f", ق: "q", ك: "k", ل: "l", م: "m", ن: "n",
+      ه: "h", و: "w", ي: "y", ى: "a", ة: "h", ء: "", ئ: "e", ؤ: "o",
+      // أرقام عربية
+      "٠": "0", "١": "1", "٢": "2", "٣": "3", "٤": "4",
+      "٥": "5", "٦": "6", "٧": "7", "٨": "8", "٩": "9",
+    };
+
+    let slug = text
       .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/[\s_-]+/g, "-")
-      .replace(/^-+|-+$/g, "")
+      .trim();
+
+    // تحويل الحروف العربية
+    slug = slug
+      .split("")
+      .map((char) => arabicToLatin[char] || char)
+      .join("");
+
+    // تنظيف
+    slug = slug
+      .replace(/[^\w\s-]/g, "")     // إزالة الرموز
+      .replace(/[\s_-]+/g, "-")     // استبدال المسافات بـ -
+      .replace(/^-+|-+$/g, "")      // إزالة - من البداية والنهاية
       .substring(0, 80);
+
+    // ✅ إذا كان الناتج فارغ، استخدم نص عشوائي
+    if (!slug) {
+      slug = `project-${Date.now()}`;
+    }
+
+    return slug;
   }
   
   // ============================================
