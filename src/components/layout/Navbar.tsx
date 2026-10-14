@@ -87,8 +87,9 @@ export default function Navbar() {
               >
                 <Image
                   src="/logo.png"
-                  alt="Code Tech"
+                  alt="Code Tech Logo"
                   fill
+                  sizes="56px"
                   className="object-contain"
                   priority
                 />
@@ -237,7 +238,14 @@ export default function Navbar() {
               <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-800">
                 <div className="flex items-center gap-3">
                   <div className="relative w-10 h-10">
-                    <Image src="/logo.png" alt="Code Tech" fill className="object-contain" />
+                    <Image 
+                      src="/logo.png" 
+                      alt="Code Tech Logo" 
+                      fill 
+                      sizes="56px" 
+                      priority
+                      className="object-contain" 
+                    />
                   </div>
                   <div>
                     <div className="text-lg font-black text-slate-900 dark:text-white">
