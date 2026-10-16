@@ -35,12 +35,12 @@ export async function POST(request: Request) {
 
     // 2. قراءة البيانات
     const body = await request.json();
-    const { fullName, email, phone, password } = body;
+    const { fullName, email, phone, password, bio, website } = body;
 
     // 3. التحقق
-    if (!fullName || !email || !password) {
+    if (!fullName || !email || !phone || !password) {
       return NextResponse.json(
-        { error: "الاسم الكامل والبريد وكلمة المرور مطلوبة" },
+        { error: "الاسم والبريد والجوال وكلمة المرور مطلوبة" },
         { status: 400 }
       );
     }
@@ -48,6 +48,15 @@ export async function POST(request: Request) {
     if (!EMAIL_REGEX.test(email)) {
       return NextResponse.json(
         { error: "البريد الإلكتروني غير صحيح" },
+        { status: 400 }
+      );
+    }
+
+    // ✅ التحقق من الجوال
+    const phoneClean = phone.replace(/[^\d+]/g, "");
+    if (phoneClean.length < 8) {
+      return NextResponse.json(
+        { error: "رقم الجوال غير صحيح" },
         { status: 400 }
       );
     }
@@ -67,21 +76,24 @@ export async function POST(request: Request) {
     }
 
     // 4. التحقق من عدم وجود الحساب
-    const existing = await prisma.visitorAccount.findUnique({
-      where: { email: email.toLowerCase() },
+    const existing = await prisma.visitorAccount.findFirst({
+      where: {
+        OR: [
+          { email: email.toLowerCase() },
+          { phone: phoneClean },
+        ],
+      },
     });
 
     if (existing) {
       // إذا كان الحساب موجوداً لكنه غير مُفعّل → نعيد إرسال OTP
       if (!existing.emailVerified) {
-        // احذف OTP القديم
         const { code } = await createOtpCode(
           email,
           "EMAIL_VERIFY",
           existing.id
         );
 
-        // إرسال OTP
         const { subject, html, text } = renderOtpEmailTemplate(
           code,
           existing.fullName
@@ -102,10 +114,17 @@ export async function POST(request: Request) {
         });
       }
 
-      return NextResponse.json(
-        { error: "البريد الإلكتروني مسجل مسبقاً" },
-        { status: 400 }
-      );
+      if (existing.email === email.toLowerCase()) {
+        return NextResponse.json(
+          { error: "البريد الإلكتروني مسجل مسبقاً" },
+          { status: 400 }
+        );
+      } else {
+        return NextResponse.json(
+          { error: "رقم الجوال مسجل مسبقاً" },
+          { status: 400 }
+        );
+      }
     }
 
     // 5. تشفير كلمة المرور
@@ -116,8 +135,10 @@ export async function POST(request: Request) {
       data: {
         fullName: fullName.trim(),
         email: email.toLowerCase().trim(),
-        phone: phone?.trim() || null,
+        phone: phoneClean,
         password: hashedPassword,
+        bio: bio?.trim() || null,
+        website: website?.trim() || null,
         emailVerified: false,
       },
     });
@@ -159,7 +180,7 @@ export async function POST(request: Request) {
         visitorId: visitor.id,
         email: visitor.email,
         emailMode: emailResult.mode,
-        displayedCode: emailResult.displayedCode, // يظهر فقط في وضع display
+        displayedCode: emailResult.displayedCode,
         expiresAt: expiresAt.toISOString(),
       },
       { status: 201 }

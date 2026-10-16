@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { href: "/about", label: "من نحن" },
   { href: "/services", label: "الخدمات" },
   { href: "/portfolio", label: "أعمالنا" },
+  { href: "/blog", label: "المدونة" }, 
   { href: "/downloads", label: "مكتبة التحميلات" },
   { href: "/reviews", label: "التقييمات" },
   { href: "/contact", label: "اتصل بنا" },

@@ -1,21 +1,17 @@
 // ============================================
 // GET /api/visitor/me
-// جلب بيانات الزائر الحالي
+// جلب بيانات الزائر الحالي + إحصائياته
 // ============================================
 
 import { NextResponse } from "next/server";
-import { getVisitorSession } from "@/lib/visitor-auth";
 import { prisma } from "@/lib/db";
+import { getVisitorSession } from "@/lib/visitor-auth";
 
 export async function GET() {
   try {
     const session = await getVisitorSession();
-
     if (!session) {
-      return NextResponse.json(
-        { error: "غير مصرح" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
 
     const visitor = await prisma.visitorAccount.findUnique({
@@ -25,10 +21,13 @@ export async function GET() {
         fullName: true,
         email: true,
         phone: true,
+        bio: true,
+        website: true,
         avatar: true,
         emailVerified: true,
         isActive: true,
         isBanned: true,
+        banReason: true,
         lastLoginAt: true,
         loginCount: true,
         createdAt: true,
@@ -42,10 +41,27 @@ export async function GET() {
       },
     });
 
-    if (!visitor || visitor.isBanned) {
+    if (!visitor) {
       return NextResponse.json(
-        { error: "الحساب غير موجود أو محظور" },
+        { error: "الحساب غير موجود" },
         { status: 404 }
+      );
+    }
+
+    if (visitor.isBanned) {
+      return NextResponse.json(
+        {
+          error: "الحساب محظور",
+          reason: visitor.banReason,
+        },
+        { status: 403 }
+      );
+    }
+
+    if (!visitor.isActive) {
+      return NextResponse.json(
+        { error: "الحساب معطل" },
+        { status: 403 }
       );
     }
 
@@ -55,6 +71,8 @@ export async function GET() {
         fullName: visitor.fullName,
         email: visitor.email,
         phone: visitor.phone,
+        bio: visitor.bio,
+        website: visitor.website,
         avatar: visitor.avatar,
         emailVerified: visitor.emailVerified,
         lastLoginAt: visitor.lastLoginAt,
@@ -70,7 +88,7 @@ export async function GET() {
   } catch (error) {
     console.error("Get me error:", error);
     return NextResponse.json(
-      { error: "حدث خطأ" },
+      { error: "حدث خطأ في جلب البيانات" },
       { status: 500 }
     );
   }

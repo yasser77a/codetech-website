@@ -11,10 +11,10 @@ import { checkRateLimit, getClientIp, RATE_LIMITS } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   try {
-    // 1. Rate Limiting
+    // Rate Limiting
     const ip = getClientIp(request);
     const rateCheck = checkRateLimit({
-      key: `login:${ip}`,
+      key: `visitor-login:${ip}`,
       maxRequests: RATE_LIMITS.LOGIN.maxRequests,
       windowMs: RATE_LIMITS.LOGIN.windowMs,
     });
@@ -26,7 +26,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. قراءة البيانات
     const body = await request.json();
     const { email, password } = body;
 
@@ -37,9 +36,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3. جلب الزائر
+    // جلب الزائر
     const visitor = await prisma.visitorAccount.findUnique({
-      where: { email: email.toLowerCase() },
+      where: { email: email.toLowerCase().trim() },
     });
 
     if (!visitor) {
@@ -58,6 +57,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!visitor.isActive) {
+      return NextResponse.json(
+        { error: "الحساب معطل، تواصل مع الإدارة" },
+        { status: 403 }
+      );
+    }
+
     if (!visitor.emailVerified) {
       return NextResponse.json(
         {
@@ -69,9 +75,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // 4. التحقق من كلمة المرور
+    // التحقق من كلمة المرور
     const validPassword = bcrypt.compareSync(password, visitor.password);
-
     if (!validPassword) {
       return NextResponse.json(
         { error: "البريد أو كلمة المرور غير صحيحة" },
@@ -79,8 +84,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // 5. تحديث آخر تسجيل دخول
-    const updatedVisitor = await prisma.visitorAccount.update({
+    // تحديث آخر تسجيل دخول
+    const updated = await prisma.visitorAccount.update({
       where: { id: visitor.id },
       data: {
         lastLoginAt: new Date(),
@@ -88,15 +93,15 @@ export async function POST(request: Request) {
       },
     });
 
-    // 6. إنشاء جلسة
+    // إنشاء جلسة
     await createVisitorSession({
-      visitorId: updatedVisitor.id,
-      email: updatedVisitor.email,
-      fullName: updatedVisitor.fullName,
+      visitorId: updated.id,
+      email: updated.email,
+      fullName: updated.fullName,
       role: "VISITOR",
     });
 
-    // 7. تسجيل النشاط
+    // تسجيل النشاط
     await prisma.activityLog.create({
       data: {
         action: "VISITOR_LOGIN",
@@ -107,15 +112,14 @@ export async function POST(request: Request) {
       },
     });
 
-    // 8. الرد
     return NextResponse.json({
       success: true,
       message: "تم تسجيل الدخول",
       visitor: {
-        id: updatedVisitor.id,
-        fullName: updatedVisitor.fullName,
-        email: updatedVisitor.email,
-        avatar: updatedVisitor.avatar,
+        id: updated.id,
+        fullName: updated.fullName,
+        email: updated.email,
+        avatar: updated.avatar,
       },
     });
   } catch (error) {

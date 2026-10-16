@@ -51,14 +51,16 @@ model VisitorAccount {
   id             String   @id @default(cuid())
   fullName       String
   email          String   @unique
-  phone          String?
-  password       String   // bcrypt hash
+  phone          String              // ← أصبح مطلوب
+  password       String
   emailVerified  Boolean  @default(false)
   isActive       Boolean  @default(true)
   isBanned       Boolean  @default(false)
   banReason      String?
   banExpiresAt   DateTime?
   avatar         String?
+  bio            String?  @db.Text   // ✨ جديد: نبذة
+  website        String?             // ✨ جديد: رابط الموقع
   lastLoginAt    DateTime?
   loginCount     Int      @default(0)
   createdAt      DateTime @default(now())
